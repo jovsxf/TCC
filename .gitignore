@@ -1,0 +1,47 @@
+# Dados brutos e documentos externos
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.sqlite
+*.db
+*.pkl
+/Dados/
+/dados/
+/data/
+/datasets/
+Legenda.md
+*.pdf
+*.docx
+*.doc
+*.pptx
+*.ppt
+
+# Ambientes, credenciais e caches locais
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.jupyter/
+.ipython/
+.pytest_cache/
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
+
+# Versões intermediárias preservadas somente no workspace
+/analise_evasao_*.ipynb
+/pre_defesa_analise_consolidada.ipynb
+/relatorio_revis*.md
+/relatorio_alteracoes_consolidada.md
+/publicacao_local/
