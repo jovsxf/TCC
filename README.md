@@ -5,6 +5,8 @@
 - `pre_defesa_analise_exploratoria.ipynb`: notebook original como referência histórica. Seus cálculos e resultados anteriores à revisão foram preservados; o caminho fixo do CSV foi substituído por configuração.
 - `pre_defesa_analise_exploratoria_v2.ipynb`: revisão proposta da análise, com saída validada anteriormente, critérios explícitos e sensibilidades.
 - `relatorio_alteracoes_v2.md`: auditoria por seção, resultados reconciliados, limitações e ajustes de publicação.
+- `pre_defesa_analise_exploratoria_v2_base_v2_novas_colunas.ipynb`: v2 executada sobre a nova extração da base (com datas das ocorrências, correções e indicadores novos), com três células de análise a mais (59–61).
+- `relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
 Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
