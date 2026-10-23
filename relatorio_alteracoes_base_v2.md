@@ -13,7 +13,7 @@ Todos os números vêm de contagens agregadas ou das saídas do notebook. Nenhum
   - nas linhas que vêm só de ocorrência, diplomação e transferência/afastamento estavam com os valores trocados;
   - reprovações (`IA34_03`) e `IA65_03` recebiam valores de outro currículo do mesmo aluno no mesmo semestre.
 - Entraram **quatro indicadores novos**: rematrícula, falecimento, prazo de integralização esgotado e afastamento sem ocorrência. Nenhuma regra de análise foi alterada por causa deles.
-- A estrutura da base continua a mesma: 59.059 registros, 7.615 alunos, 3.507 alunos com saída e 3.841 linhas positivas. Alguns números da pré-defesa mudaram por causa da correção da diplomação e precisam ser atualizados no artigo (seção 4).
+- A estrutura da base continua a mesma: 59.059 registros, 7.615 alunos, 3.507 alunos com saída e 3.841 linhas positivas. Vários números da pré-defesa mudaram e precisam ser atualizados no artigo: amostras, CRE, frequência, contagens de disciplinas, indicadores financeiros, indicadores socioeconômicos e trajetória (seção 4). A maior parte das mudanças vem da correção da diplomação. Sexo e rendas parecem refletir dados atualizados entre as extrações.
 - O notebook ganhou três células de análise (59, 60 e 61) e um ajuste na tabela de ausências (célula 67). Ele roda inteiro sem erros.
 
 ---
@@ -22,10 +22,12 @@ Todos os números vêm de contagens agregadas ou das saídas do notebook. Nenhum
 
 ### 2.1 Datas das ocorrências
 
-**O que entrou:** para cada tipo de ocorrência, a data em que ela foi registrada (`DATADESISTENCIA`, `DATAABANDONO`, `DATATRANCAMENTO`, `DATAREINGRESSO` etc.). Também entraram três colunas sobre a saída:
+**O que entrou:** dois tipos de data, que não devem ser confundidos.
 
-- `DATAPRIMEIRASAIDA` e `DATAULTIMASAIDA`: a primeira e a última data de saída no semestre;
-- `DATAINCLUSAOSAIDA`: quando a saída foi lançada no sistema.
+- **Data da ocorrência:** a data atribuída ao evento no registro do aluno. Ela aparece por tipo (`DATADESISTENCIA`, `DATAABANDONO`, `DATATRANCAMENTO`, `DATAREINGRESSO` etc.) e, para as saídas, em `DATAPRIMEIRASAIDA` e `DATAULTIMASAIDA` (primeira e última data de saída no semestre). Quando há mais de um registro do mesmo tipo no semestre, vale a primeira data.
+- **Data de inclusão no sistema:** o dia em que a saída foi lançada, em `DATAINCLUSAOSAIDA`. Ela pode ser bem posterior à data da ocorrência, quando o lançamento é retroativo.
+
+As análises de ordem dos eventos usam a data da ocorrência. A data de inclusão serve só como diagnóstico, para medir lançamentos retroativos (seção 3.3).
 
 **Por quê:** a "ordem dos eventos dentro do semestre" estava nas pendências. Só com as flags não dá para saber, por exemplo, se um reingresso veio antes ou depois de uma desistência no mesmo semestre.
 
@@ -60,6 +62,21 @@ A comparação de reprovações entre casos e referências (3,282 × 1,593) não
 
 Cada indicador vem com a data correspondente (`DATAREMATRICULA` etc.). Eles só trazem a informação. A decisão sobre cada um está na seção 6.
 
+### 2.5 Identificação da extração
+
+Para conseguirmos reproduzir a análise depois, a extração usada neste notebook fica identificada assim:
+
+| Item | Valor |
+|---|---|
+| Data da extração | 22/10/2026 |
+| Arquivo | `dados_alunos.csv` (59.059 linhas, fora do repositório) |
+| SHA-256 do arquivo | `A PREENCHER` |
+| Regras aplicadas | as descritas nas seções 2.1 a 2.4 |
+
+O notebook já calcula o SHA-256 do CSV na célula 3 e confere, no fim da execução, se o arquivo não mudou durante a análise. Se o hash de uma execução futura for diferente, a base não é a mesma desta versão.
+
+A consulta usada na extração fica guardada fora do repositório, junto com a base, porque descreve a estrutura do sistema acadêmico da instituição.
+
 ---
 
 ## 3. O que analisamos antes de mudar
@@ -81,15 +98,15 @@ Antes de alterar a base, conferimos a extração com contagens agregadas. Esta s
 
 **Implicação:** na prática, o evento de saída é desistência, abandono ou cancelamento.
 
-### 3.3 A data da ocorrência é a data de registro
+### 3.3 A data da ocorrência é uma data administrativa
 
 **Por que olhamos:** para saber se a data serve para ordenar os eventos e para dizer quando o aluno saiu.
 
-**Resultados:**
+**Resultados.** Os três primeiros itens foram medidos sobre todos os registros de ocorrência, sem filtrar por curso, então também incluem a pós-graduação:
 
-- 93,76% das datas não têm hora, então só dá para ordenar eventos por dia;
-- 26,8% das saídas foram lançadas no sistema mais de 180 dias depois da data registrada;
-- a data da ocorrência cai fora da metade do ano correspondente ao semestre a que ela está ligada em 22,38% das ocorrências de 1º semestre e em 19,61% das de 2º semestre, quase sempre na virada entre semestres.
+- 93,76% das datas de ocorrência não têm hora, então só dá para ordenar eventos por dia;
+- nas 7.510 saídas registradas, a data de inclusão no sistema ficou no mesmo dia da data da ocorrência em 40,56% dos casos, de 1 a 30 dias depois em 29,55%, de 31 a 180 dias depois em 3,01% e mais de 180 dias depois em 26,8%. Em 6 saídas (0,08%), a inclusão é anterior à data da ocorrência;
+- entre 2009/1 e 2026/1, nos tipos de ocorrência usados na base, a data da ocorrência cai fora da metade do ano correspondente ao semestre em 22,38% das ocorrências de 1º semestre e em 19,61% das de 2º semestre, quase sempre na virada entre semestres.
 
 Comparando a data da primeira saída com o período de aulas do semestre:
 
@@ -129,25 +146,131 @@ Comparando a data da primeira saída com o período de aulas do semestre:
 
 ## 4. Números do notebook: base antiga × base nova
 
-| Indicador | Base antiga (v2) | Base nova |
+Comparamos célula a célula as saídas do `pre_defesa_analise_exploratoria_v2.ipynb` (base antiga) com as do notebook novo. Mudaram as seções de eventos, sexo, amostras, CRE, frequência, contagens de disciplinas, trancamento, indicadores financeiros, indicadores socioeconômicos e trajetória. As saídas idênticas não aparecem nas tabelas abaixo.
+
+Diferenças entre as duas bases que explicam a maior parte das mudanças:
+
+- **correção da diplomação (2.2).** A primeira conclusão do curso decide quem pode entrar como caso e como referência. Com 240 diplomações a menos nas linhas de ocorrência, as amostras ganham alunos, e todas as comparações feitas sobre elas mudam um pouco;
+- **atualização dos dados entre as extrações.** Algumas mudanças não dependem das correções (sexo e rendas, abaixo). A hipótese é que o cadastro foi atualizado entre a extração antiga e a nova, mas isso ainda não foi verificado.
+
+### 4.1 Estrutura e eventos
+
+| Indicador | Base antiga | Base nova |
 |---|---|---|
 | Registros / estudantes / semestres / cursos | 59.059 / 7.615 / 35 / 12 | igual |
 | Alunos com saída / linhas positivas / pares / mais de um semestre | 3.507 / 3.841 / 3.728 / 202 | igual |
-| Reingresso formal após 1ª saída | 138 | 138 |
-| Matrícula efetivada após 1ª saída | 398 | 398 |
-| **Conclusão após 1ª saída** | 156 | **142** |
-| **CRE em t−1, casos (n)** | 23,65 (1.266) | **23,669 (1.270)** |
-| **CRE em t−1, referências (aluno/semestre)** | 51,83 (15.042) | **51,727 (15.254)** |
-| **Diferença do CRE em t−1** | −28,18 | **−28,058** |
-| **Trajetória do CRE (alunos)** | 464 | **466** |
-| **Trajetória t−3 / t−2 / t−1** | 33,25 / 29,32 / 21,70 | **33,303 / 29,350 / 21,777** |
-| **Sexo com saída F / M** | 41,60% / 47,33% | **41,548% / 47,335%** |
-| **Sexo χ² / p** | 17,098 / 3,55e-05 | **17,413 / 3,01e-05** |
+| Alunos com transferência/afastamento | 84 | **323** |
+| Alunos com conclusão observada | 2.867 | **2.634** |
+| Conclusão sem saída | 2.690 | **2.475** |
+| Conclusão antes ou no semestre da 1ª saída | 21 | **17** |
+| Conclusão após 1ª saída | 156 | **142** |
+| Reingresso formal após 1ª saída / após a última saída | 138 / 68 | igual |
+| Matrícula efetivada após 1ª saída | 398 | igual |
 | Status final sem saída: Inativo / indefinidos / conflitos | 267 / 946 / 15 | igual |
 
-- **Conclusões, CRE e trajetória** mudaram por causa da correção da diplomação, que mexe em quem entra como caso e como referência. Com 240 diplomações a menos nas linhas de ocorrência, entram 4 casos e 212 referências a mais. A conclusão sobre o CRE continua a mesma.
-- **Sexo** não depende dessa correção: só o grupo feminino mudou (698 de 1.680, com 7 alunos sem informação). Hipótese ainda não verificada: o cadastro foi atualizado entre as duas extrações. Para conferir, basta ver se a base antiga tinha 9 alunos sem informação de sexo.
-- Alunos com transferência/afastamento na base nova: 323.
+### 4.2 Sexo
+
+| Indicador | Base antiga | Base nova |
+|---|---|---|
+| Feminino: alunos / com saída / % | 1.678 / 698 / 41,597% | **1.680 / 698 / 41,548%** |
+| Masculino: alunos / com saída / % | 5.928 / 2.806 / 47,335% | igual |
+| Sem informação: alunos / com saída | 9 / 3 | **7 / 3** |
+| χ² / p (n) | 17,098 / 3,55e-05 (7.606) | **17,413 / 3,01e-05 (7.608)** |
+
+Sexo não depende das correções. Dois alunos passaram de "sem informação" para feminino, o que é compatível com cadastro preenchido entre as extrações.
+
+### 4.3 Amostras de comparação
+
+| Amostra | Base antiga | Base nova |
+|---|---|---|
+| Casos elegíveis antes dos estratos | 1.480 | **1.484** |
+| V0: casos / referências aluno-semestre / referências pessoas / estratos | 1.464 / 16.511 / 4.915 / 595 | **1.468 / 16.697 / 4.933 / 596** |
+| V1: casos / referências aluno-semestre / referências pessoas | 1.240 / 14.945 / 4.889 | **1.244 / 15.157 / 4.907** |
+| V2: casos / referências aluno-semestre / referências pessoas | 1.240 / 14.651 / 4.831 | **1.244 / 14.729 / 4.834** |
+| Referências V1 com matrícula confirmada em t / não confirmada | 14.651 / 294 | **14.729 / 428** |
+
+Os casos excluídos por falta de estrato comum continuam 16, e os excluídos de V1 em relação a V0 continuam 224.
+
+### 4.4 CRE e frequência em t−1
+
+Valores: média dos casos / média padronizada das referências / diferença.
+
+| Indicador | Base antiga | Base nova |
+|---|---|---|
+| CRE V0 (n casos / n referências) | 23,652 / 51,829 / −28,177 (1.266 / 15.042) | **23,669 / 51,727 / −28,058 (1.270 / 15.254)** |
+| CRE V1 | 23,803 / 51,841 / −28,038 | **23,820 / 51,737 / −27,917** |
+| CRE V2 | 23,803 / 52,308 / −28,505 | **23,820 / 52,315 / −28,495** |
+| Frequência V0 (%) | 68,002 / 90,525 / −22,523 | **68,042 / 90,483 / −22,440** |
+| Frequência V1 (%) | 78,908 / 90,603 / −11,695 | **78,920 / 90,566 / −11,646** |
+| Frequência V2 (%) | 78,908 / 90,733 / −11,825 | **78,920 / 90,727 / −11,807** |
+| Disciplinas com mais de 25% de faltas, V0 | 1,005 / 0,233 / 0,772 | **1,004 / 0,236 / 0,768** |
+| Com alguma disciplina acima de 25% de faltas: casos % / referências % | 37,705 / 12,879 | **37,807 / 13,017** |
+
+### 4.5 Contagens de disciplinas e trancamento (V0)
+
+Valores: média dos casos / média padronizada das referências / diferença.
+
+| Indicador | Base antiga | Base nova |
+|---|---|---|
+| Aprovadas registradas (`IA75_03`) | 2,278 / 4,917 / −2,639 | **2,296 / 4,927 / −2,631** |
+| Reprovadas registradas (`IA34_03`) | 3,279 / 1,584 / 1,695 | **3,282 / 1,593 / 1,689** |
+| Matriculadas (`IA75_04`) | 5,856 / 5,935 / −0,079 | **5,858 / 5,937 / −0,079** |
+| `IA65_03` | 0,427 / 0,372 / 0,055 | **0,426 / 0,374 / 0,051** |
+| Trancamento no histórico até o retrato: casos % / referências % | 16,872 / 2,371 | **16,894 / 2,365** |
+| Linhas com aprovadas > matriculadas: acadêmicas | 5.388 | igual |
+| Linhas com reprovadas > matriculadas: acadêmicas / ocorrência | 140 / 5.793 | **138 / 0** |
+
+As mudanças de reprovações na comparação V0 vêm das amostras (4.3), não da correção 2.3: com a base nova, rodar o notebook antes e depois dessa correção deu a mesma comparação.
+
+### 4.6 Indicadores financeiros (V0)
+
+| Indicador | Base antiga | Base nova |
+|---|---|---|
+| Bolsa positiva entre informados: n casos / n referências | 369 / 3.419 | **369 / 3.427** |
+| Bolsa positiva: casos % / referências % | 96,206 / 96,615 | **96,206 / 96,629** |
+| FIES no retrato: casos % / referências % | 2,801 / 5,116 | **2,793 / 5,094** |
+| Perda de FIES no retrato: casos % / referências % | 1,025 / 0,131 | **1,022 / 0,129** |
+| Percentual de bolsa (`IA10_01`): casos / referências / diferença | 36,775 / 38,419 / −1,644 | **36,775 / 38,421 / −1,646** |
+| Mensalidade: casos / referências (n casos / n referências) | 1.807,943 / 1.807,943 (1.417 / 15.989) | **1.807,694 / 1.807,694 (1.421 / 16.171)** |
+
+### 4.7 Indicadores socioeconômicos
+
+**Rendas, descrição geral da base:**
+
+| Variável | Base antiga: linhas informadas / média | Base nova: linhas informadas / média |
+|---|---|---|
+| Renda da mãe (`IA70_01`) | 15.190 / 4.009,278 | 15.190 / **4.007,687** |
+| Renda do estudante (`IA70_03`) | 15.190 / 1.149,233 | 15.190 / **1.148,867** |
+| Renda do pai (`IA70_05`) | 15.190 / 4.017,481 | 15.190 / **4.013,288** |
+
+O número de linhas informadas é o mesmo, mas as médias mudaram. Isso não vem das correções. É compatível com dados socioeconômicos atualizados entre as extrações, o que reforça a pendência sobre a data de coleta e a atualização retrospectiva desses dados.
+
+**Rendas no retrato, V0** (média dos casos / média padronizada das referências / diferença):
+
+| Variável | Base antiga | Base nova |
+|---|---|---|
+| Renda da mãe | 2.445,185 / 2.859,346 / −414,161 | **2.441,233 / 2.847,769 / −406,536** |
+| Renda do estudante | 909,378 / 917,410 / −8,032 | **907,081 / 938,843 / −31,762** |
+| Renda do pai | 2.493,372 / 3.077,317 / −583,945 | **2.495,578 / 3.061,735 / −566,157** |
+| Ausência de renda: casos % / referências % | 72,746 / 66,053 | **72,752 / 66,263** |
+
+A renda do estudante é a que mais muda em termos relativos: a diferença passa de −8,032 para −31,762. Antes de usar essa variável no artigo, vale olhar com cuidado.
+
+O patrimônio familiar e a escolaridade da mãe e do pai também tiveram mudanças pequenas nas distribuições: a maior variação de uma categoria foi de 0,097 ponto percentual. Os valores completos estão nas células 52 e 54 dos dois notebooks.
+
+### 4.8 Trajetória do CRE
+
+| Painel | Base antiga: alunos / t−3 / t−2 / t−1 | Base nova: alunos / t−3 / t−2 / t−1 |
+|---|---|---|
+| T0 (painel completo) | 464 / 33,246 / 29,325 / 21,700 | **466 / 33,303 / 29,350 / 21,777** |
+| T1 (curso estável) | 431 / 32,895 / 29,095 / 21,922 | **433 / 32,959 / 29,123 / 22,004** |
+| T2 (vínculo curricular estável) | 340 / 33,493 / 29,688 / 22,422 | **342 / 33,570 / 29,719 / 22,522** |
+| Queda média de t−3 a t−1 (T0 / T1 / T2) | −11,546 / −10,973 / −11,071 | **−11,526 / −10,955 / −11,047** |
+| Alunos com queda (T0 / T1 / T2) | 62,716% / 61,717% / 61,471% | **62,876% / 61,894% / 61,696%** |
+
+### 4.9 O que muda para o artigo
+
+A direção de todas as comparações continua a mesma. Os números citados na pré-defesa e no artigo precisam ser trocados pelos da base nova. As mudanças maiores estão nas contagens de conclusão e de transferência/afastamento (4.1) e na renda do estudante (4.7).
 
 ---
 
@@ -212,6 +335,8 @@ As colunas de data foram retiradas da tabela, porque ficam vazias por definiçã
 ---
 
 ## 6. Decisões
+
+Todas as decisões abaixo entram na definição da variável-alvo e devem ser fechadas junto com a #18.
 
 ### 6.1 Em aberto (levar à orientação)
 
