@@ -7,6 +7,8 @@
 - `relatorio_alteracoes_v2.md`: auditoria por seção, resultados reconciliados, limitações e ajustes de publicação.
 - `pre_defesa_analise_exploratoria_v2_base_v2_novas_colunas.ipynb`: v2 executada sobre a nova extração da base (com datas das ocorrências, correções e indicadores novos), com três células de análise a mais (59–61).
 - `relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
+- `pre_defesa_analise_exploratoria_v2_base_v3_legenda_v2.ipynb`: v2 executada sobre a base v3 (`Base_academica_v3.csv`), com os indicadores de disciplinas corrigidos e a legenda v2.
+- `relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
 Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
@@ -22,11 +24,11 @@ python -m pip install pandas numpy matplotlib scipy ipython jupyterlab
 Execute a partir da pasta do repositório. Configure o CSV externo (exemplo genérico):
 
 ```powershell
-$env:TCC_CSV_PATH = "D:\dados_privados\dados_alunos.csv"
+$env:TCC_CSV_PATH = "D:\dados_privados\Base_academica_v3.csv"
 python -m jupyterlab
 ```
 
-Abra o notebook e execute as células em ordem, em kernel limpo. Sem `TCC_CSV_PATH`, ambos procuram `dados_alunos.csv` no diretório de execução. A v2 também lê a legenda e o original para verificar a integridade das fontes:
+Abra o notebook e execute as células em ordem, em kernel limpo. Sem `TCC_CSV_PATH`, ambos procuram `dados_alunos.csv` no diretório de execução. As versões da base ficam na pasta compartilhada do grupo como `Base_academica_v2.csv`, `Base_academica_v3.csv` etc.; a v1 é o antigo `dados_alunos.csv`. O notebook v2 também lê a legenda e o original para verificar a integridade das fontes:
 
 ```powershell
 $env:TCC_LEGENDA_PATH = "D:\dados_privados\Legenda.md"

@@ -2,7 +2,9 @@
 
 Este documento acompanha a nova extração da base, feita em 21 e 22/10/2026, e a versão do notebook que roda sobre ela (`pre_defesa_analise_exploratoria_v2_base_v2_novas_colunas.ipynb`).
 
-Todos os números vêm de contagens agregadas ou das saídas do notebook. Nenhum deles identifica aluno. A base (`dados_alunos.csv`) continua fora do repositório.
+Todos os números vêm de contagens agregadas ou das saídas do notebook. Nenhum deles identifica aluno. A base desta versão é a `Base_academica_v2.csv`, que fica na pasta compartilhada do grupo, fora do repositório. A versão anterior, usada na pré-defesa, é o antigo `dados_alunos.csv`.
+
+> **Atualização (24/10/2026):** os indicadores de disciplinas foram corrigidos de novo, na base v3 (`Base_academica_v3.csv`). Os números de aprovadas, matriculadas, reprovadas e `IA65_03` desta página foram substituídos pelos do `relatorio_correcoes_indicadores_disciplinas.md`. Os demais números desta página continuam valendo.
 
 ---
 
@@ -69,8 +71,8 @@ Para conseguirmos reproduzir a análise depois, a extração usada neste noteboo
 | Item | Valor |
 |---|---|
 | Data da extração | 22/10/2026 |
-| Arquivo | `dados_alunos.csv` (59.059 linhas, fora do repositório) |
-| SHA-256 do arquivo | `A PREENCHER` |
+| Arquivo | `Base_academica_v2.csv` (59.059 linhas, na pasta compartilhada, fora do repositório) |
+| SHA-256 do arquivo | `00ED0F470E3A450A3C06D5FDEFC7ACC077524B399028F4BEFACC4907AAC0259E` |
 | Regras aplicadas | as descritas nas seções 2.1 a 2.4 |
 
 O notebook já calcula o SHA-256 do CSV na célula 3 e confere, no fim da execução, se o arquivo não mudou durante a análise. Se o hash de uma execução futura for diferente, a base não é a mesma desta versão.
