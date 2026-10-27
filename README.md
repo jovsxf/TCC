@@ -7,6 +7,7 @@
 - `relatorio_alteracoes_v2.md`: auditoria por seção, resultados reconciliados, limitações e ajustes de publicação.
 - `temporalidade_campos_v3.ipynb`: análise de quando cada campo da base v3 é conhecido em relação à saída (situação do aluno, indicadores do semestre da saída, datas e ordem dos eventos).
 - `relatorio_temporalidade_campos.md`: resultado da análise de temporalidade, tabela de quando cada campo é conhecido e lista de campos com vazamento (#51).
+- `temporalidade_campos_v4.ipynb` e `pre_defesa_analise_exploratoria_v2_base_v4.ipynb`: os mesmos notebooks executados sobre a base v4 (`Base_academica_v4.csv`), em que a frequência fica vazia quando o aluno não tem turma ativa no semestre. O efeito está na seção 10 do relatório de temporalidade.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
 Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.

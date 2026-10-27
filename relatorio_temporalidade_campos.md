@@ -2,7 +2,9 @@
 
 O modelo não pode usar informação que só existe depois da saída. Este relatório verifica, na base v3 (`Base_academica_v3.csv`), **quando cada campo da base é conhecido** e lista os campos que não podem entrar no modelo por vazamento (para a #26).
 
-As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre a base v3, com SHA-256 `9CCE803735488354B820F9B1976612AB9D1DE5950EDB91BE57F85C415D6A2343`. Todos os números são agregados.
+As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre a base v3 (SHA-256 `9CCE803735488354B820F9B1976612AB9D1DE5950EDB91BE57F85C415D6A2343`). Todos os números são agregados.
+
+> **Atualização (27/10/2026):** a análise levou a uma correção na frequência, aplicada na base v4 (`Base_academica_v4.csv`). As seções 2 a 8 descrevem a base v3. O resultado da correção e o que mudou na v4 estão na seção 10.
 
 **Termos usados:**
 
@@ -16,8 +18,8 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 
 - **A situação do aluno (`STATUSALUNO`) não pode entrar no modelo, nem em t−1.** Ela é o retrato do fim do semestre: no semestre da saída, 99,93% das linhas estão como "Inativo". Em t−1, 14,24% já estão como "Inativo", contra 2,24% nos semestres mais antigos de quem saiu e 0,62% nos semestres de quem nunca saiu.
 - **No semestre da saída, os indicadores de desempenho não descrevem o semestre.** O CRE do semestre está preenchido em só 4,30% das linhas. Frequência, aprovadas e reprovadas vêm zeradas. Em 96,57% das linhas acadêmicas com saída, o aluno tinha disciplinas matriculadas, mas nenhum resultado no semestre.
-- **A frequência zero (`IA04_01` = 0) não é frequência zero.** Ela aparece quando o aluno não tem nenhuma turma ativa no semestre: em 100% das linhas do semestre da saída e em 14,44% das linhas de t−1. Proposta de correção na seção 6.
-- **Para cerca de 14% dos casos, t−1 já mostra o aluno parado.** A proporção de "Inativo" em t−1 (14,24%) é parecida com a de frequência zero (14,44%) e reforça a leitura de que, para parte dos alunos, a saída de fato acontece em t−1 e só é registrada em t. Isso entra na definição da variável-alvo (#18).
+- **A frequência zero (`IA04_01` = 0) não era frequência zero.** Na v3, ela aparecia quando o aluno não tinha nenhuma turma ativa no semestre: em 100% das linhas do semestre da saída e em 14,44% das linhas de t−1. **Corrigido na base v4** (seção 10): a frequência agora fica vazia nesses casos, e a diferença de frequência entre casos e referências caiu de −22,440 para −11,446 pontos.
+- **Para cerca de 14% dos casos, t−1 já mostra o aluno parado.** A proporção de "Inativo" em t−1 (14,24%) é parecida com a de t−1 sem turma ativa (14,44%) e reforça a leitura de que, para parte dos alunos, a saída de fato acontece em t−1 e só é registrada em t. Isso entra na definição da variável-alvo (#18).
 - **Na graduação, a data da saída é lançada no sistema quase sempre a tempo.** 96,95% das saídas foram lançadas em até 30 dias. O número de 26,8% com mais de 180 dias, citado no relatório da base v2, incluía a pós-graduação.
 - **Dentro do semestre, as movimentações administrativas vêm antes da saída.** Migração de currículo, rematrícula, reingresso e mudança de curso, quando aparecem junto com uma saída no mesmo semestre, vêm antes dela.
 
@@ -66,7 +68,7 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 | CRE no semestre: zeros entre os preenchidos | 35,94% | 20,79% | 6,89% | 1,32% |
 | CRE acumulado: preenchido | **47,04%** | 90,46% | 98,62% | 99,68% |
 | CRE acumulado: zeros entre os preenchidos | 77,14% | 8,31% | 1,24% | 0,17% |
-| Frequência: zeros | **100,00%** | 14,44% | 2,55% | 0,74% |
+| Frequência: zeros (na v4, vazia) | **100,00%** | 14,44% | 2,55% | 0,74% |
 | Disciplinas aprovadas: zeros | **98,45%** | 58,90% | 27,78% | 5,33% |
 | Disciplinas reprovadas: zeros | **100,00%** | 21,29% | 20,69% | 57,13% |
 | Disciplinas matriculadas: média | 4,67 | 4,85 | 5,04 | 5,76 |
@@ -86,8 +88,8 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 **Leitura.**
 
 - No semestre da saída, o aluno costuma estar matriculado em disciplinas, mas sai antes de ter resultado. CRE, frequência, aprovadas e reprovadas desse semestre não descrevem o desempenho: descrevem a saída.
-- **A frequência zero é um artefato.** A frequência só é calculada sobre as turmas em que o aluno está ativo. Sem nenhuma turma ativa, ela vem como 0, e não vazia. É o que acontece em 100% das linhas do semestre da saída.
-- **Em t−1, a mesma marca aparece em 14,44% das linhas.** Também em t−1, 58,90% das linhas têm zero aprovadas e 20,79% dos CRE preenchidos são zero. A proporção de frequência zero é parecida com a de "Inativo" em t−1 (14,24%). Isso sugere que, para esses alunos, o abandono de fato já aconteceu em t−1, mas a sobreposição entre os dois grupos ainda não foi medida linha a linha.
+- **A frequência zero era um artefato.** A frequência só é calculada sobre as turmas em que o aluno está ativo. Sem nenhuma turma ativa, na v3 ela vinha como 0, e não vazia. É o que acontecia em 100% das linhas do semestre da saída. Na v4, ela fica vazia (seção 10).
+- **Em t−1, a mesma marca aparecia em 14,44% das linhas.** Também em t−1, 58,90% das linhas têm zero aprovadas e 20,79% dos CRE preenchidos são zero. A proporção sem turma ativa é parecida com a de "Inativo" em t−1 (14,24%). Isso sugere que, para esses alunos, o abandono de fato já aconteceu em t−1. A sobreposição entre os dois grupos ainda não foi medida linha a linha, mas a seção 10 traz um indício indireto.
 - As linhas que vêm só de ocorrência não têm esses indicadores (ficam vazias). Na base v2, 93,29% das linhas de saída vindas só de ocorrência não tinham dado acadêmico nenhum.
 
 ## 4. Datas das ocorrências
@@ -194,7 +196,7 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | `STATUSALUNO`, `CODIGOSTATUSALUNO` | Situação do aluno | Fim do semestre, ou depois | **Não** | **Não** | 99,93% "Inativo" em t; 14,24% "Inativo" em t−1 (seção 2) |
 | `CRENOSEMESTRE` | CRE no semestre | Fim do semestre | **Não** | Sim | Em t, preenchido em 4,30% das linhas |
 | `CREATESEMESTRE`, `MEDIANAATESEMESTRE` | CRE e mediana acumulados | Fim do semestre | **Não** | Sim | Em t, preenchido em 47,04%, e 77,14% dos preenchidos são zero |
-| `IA04_01`, `IA04_02` | Frequência e disciplinas com >25% de faltas | Fim do semestre | **Não** | Sim, com correção | 0 = sem turma ativa, e não frequência zero (proposta abaixo) |
+| `IA04_01`, `IA04_02` | Frequência e disciplinas com >25% de faltas | Fim do semestre | **Não** | Sim | Na v4, vazia quando o aluno não tem turma ativa (seção 10) |
 | `IA75_04`, `ATIVCOMPL_MATRICULADAS` | Disciplinas e atividades matriculadas | Início do semestre | Possível | Sim | Em t, o aluno costuma estar matriculado (média 4,67) |
 | `IA75_03`, `IA34_03`, `IA65_03` | Aprovadas, reprovadas, retiradas | Fim do semestre | **Não** | Sim | Em t, 98,45% zero aprovadas e 100% zero reprovadas |
 | `ATIVCOMPL_APROVADAS`, `ATIVCOMPL_REPROVADAS` | Resultado das atividades complementares | Fim do semestre | **Não** | Sim | Mesma lógica das disciplinas |
@@ -212,7 +214,7 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | `QUANTIDADEOCORRENCIAS` | Ocorrências do semestre | Durante o semestre | **Não** | Com cuidado | Mistura tipos de antes e de depois da saída |
 | `DATA*` | Datas das ocorrências | Durante ou depois do semestre | **Não** | **Não** | Servem só para ordenar eventos; nunca como variável |
 
-**Correção proposta para a frequência.** Na consulta de extração, `IA04_01` e `IA04_02` vêm como 0 quando o aluno não tem nenhuma turma ativa no semestre. A proposta é que fiquem vazios nesse caso, como os indicadores das linhas que vêm só de ocorrência. Isso muda a comparação de frequência entre casos e referências na análise exploratória, porque hoje os zeros puxam a média dos casos para baixo em t−1.
+**Correção da frequência (feita na base v4).** Na v3, `IA04_01` e `IA04_02` vinham como 0 quando o aluno não tinha nenhuma turma ativa no semestre. Na v4, ficam vazios nesse caso, como os indicadores das linhas que vêm só de ocorrência. O efeito está na seção 10.
 
 ## 7. Lista de vazamento para a #26
 
@@ -234,7 +236,7 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 
 **Entram com ressalva:**
 
-- `IA04_01` e `IA04_02` em t−1, depois da correção da seção 6 ou tratando o 0 como ausente;
+- `IA04_01` e `IA04_02` em t−1, usando a base v4 (ou, nas bases anteriores, tratando o 0 como ausente);
 - `IA70_*`, que podem ter sido atualizados depois da coleta;
 - `SEXO`, `SIGLACURSO`, `TURNO` e `APROVEIT`, que podem mudar com atualização de cadastro, mudança de curso ou migração.
 
@@ -250,6 +252,76 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 
 ## 9. Pendências
 
-- Aplicar a correção da frequência (seção 6) e rodar de novo a análise exploratória.
-- Medir, linha a linha, a sobreposição entre "Inativo" em t−1 e frequência zero em t−1.
+- ~~Aplicar a correção da frequência e rodar de novo a análise exploratória.~~ Feito na base v4 (seção 10).
+- Medir, linha a linha, a sobreposição entre "Inativo" em t−1 e t−1 sem turma ativa.
 - Atualizar a legenda com a informação de que, na graduação, 96,95% das saídas são lançadas em até 30 dias.
+
+---
+
+## 10. Correção da frequência: base v4
+
+**O que mudou.** A base v4 (`Base_academica_v4.csv`) foi extraída só com a correção da frequência. Colunas, número de linhas e ordem são os mesmos da v3. Mudaram apenas `IA04_01` e `IA04_02`: em 2.136 linhas acadêmicas, o valor passou de 0 para vazio.
+
+| Item | Valor |
+|---|---|
+| Data da extração | 27/10/2026 |
+| Arquivo | `Base_academica_v4.csv` (59.059 linhas) |
+| SHA-256 | `A37D9F2F12CB0A19DF1011BE6BA61D64E644A4C01717714DCD0B62C782DE3646` |
+| Única mudança em relação à v3 | `IA04_01` e `IA04_02` vazios quando o aluno não tem turma ativa no semestre |
+
+Na v4, uma única linha continua com frequência 0. Pela regra nova, isso só acontece se o aluno tem turma ativa e faltou a todas as aulas. Ainda não conferimos esse caso.
+
+Os dois notebooks foram executados de novo na v4, com o mesmo código, sem erros:
+
+- `temporalidade_campos_v4.ipynb`;
+- `pre_defesa_analise_exploratoria_v2_base_v4.ipynb`.
+
+O notebook de temporalidade avisa que o arquivo não é a v3. É o esperado, porque a conferência compara com o hash da v3.
+
+### 10.1 Temporalidade (seção 3, na v4)
+
+| Indicador | Semestre da saída | t−1 | Semestres mais antigos | Alunos sem saída |
+|---|---|---|---|---|
+| Frequência: preenchida | 0,00% | 85,56% | 97,45% | 99,26% |
+| Frequência: zeros entre as preenchidas | — | 0,00% | 0,00% | 0,00% |
+| Frequência: média | — | 79,33 | 85,18 | 92,28 |
+| Disciplinas com >25% de faltas: média | — | 1,17 | 0,60 | 0,15 |
+
+No semestre da saída, a frequência agora fica vazia em todas as linhas, em vez de vir zerada. Em t−1, 14,44% das linhas ficaram sem frequência: os mesmos 14,44% que antes vinham zerados. Nenhuma outra tabela do notebook mudou.
+
+### 10.2 Análise exploratória
+
+Mudaram 5 células, todas sobre frequência. Saídas, CRE, disciplinas, finanças, perfil, trajetória e as células 59 a 61 ficaram iguais.
+
+**Frequência em t−1** (média dos casos / média padronizada das referências / diferença):
+
+| Versão | Base v3 | Base v4 |
+|---|---|---|
+| V0 | 68,042 / 90,483 / −22,440 (1.468 casos) | **79,275 / 90,721 / −11,446** (1.260 casos) |
+| V1 | 78,920 / 90,566 / −11,646 (1.244 casos) | **79,302 / 90,675 / −11,372** (1.238 casos) |
+| V2 | 78,920 / 90,727 / −11,807 (1.244 casos) | **79,302 / 90,835 / −11,533** (1.238 casos) |
+
+**Disciplinas com mais de 25% de faltas (V0):**
+
+| | Base v3 | Base v4 |
+|---|---|---|
+| Média: casos / referências / diferença | 1,004 / 0,236 / 0,768 | **1,170 / 0,225 / 0,945** |
+| Com alguma disciplina acima de 25%: casos / referências | 37,807% / 13,017% | **44,048% / 12,586%** |
+
+**Leitura.**
+
+- **A diferença de frequência na comparação principal (V0) caiu pela metade**, de −22,440 para −11,446 pontos. Parte da diferença da v3 vinha dos zeros de quem não tinha turma ativa.
+- **O resultado principal agora é quase igual ao das variantes V1 e V2**, que exigem situação "Ativo" em t−1. Na v3, só elas descartavam esses alunos. É um indício indireto de que os casos sem turma ativa em t−1 são, em boa parte, os mesmos com situação "Inativo" em t−1.
+- **A direção não muda:** antes da saída, os casos têm frequência menor que as referências e mais disciplinas com faltas acima de 25%.
+- Essas diferenças são descritivas e não indicam causa.
+
+**Amostra da comparação de frequência.** Os casos com frequência informada caíram de 1.468 para 1.260: 208 ficaram sem valor. Com isso, a coluna `refs_informadas_fora_suporte` passou de 0 para 1.520. Isso é esperado e não indica erro:
+
+- a comparação é padronizada por semestre, curso e período, e só usa estratos com pelo menos um caso e uma referência informados;
+- os 208 casos sem frequência deixaram 62 estratos sem nenhum caso informado (de 596 para 534);
+- as 1.520 referências desses estratos ficam fora da comparação de frequência, porque não há caso com quem compará-las.
+
+Na v3 isso não acontecia, porque todos os casos tinham frequência, mesmo que fosse um 0 artificial. A comparação de frequência da v4 vale para o subconjunto de 1.260 casos e 15.153 referências.
+
+**Validação numérica:** `IA04_01` e `IA04_02` passaram de 14.642 nulos (24,792% das linhas) para 16.778 (28,409%). A diferença é de 2.136 linhas.
+
