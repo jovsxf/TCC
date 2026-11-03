@@ -9,6 +9,7 @@
 - `relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
 - `pre_defesa_analise_exploratoria_v2_base_v3_legenda_v2.ipynb`: v2 executada sobre a base v3 (`Base_academica_v3.csv`), com os indicadores de disciplinas corrigidos e a legenda v2.
 - `relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
+- `decisoes_metricas_modelagem.md`: justificativa das métricas, Recall como critério principal, limiar de 0,5 e plano de registro de resultados após a definição do alvo (#18).
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
 Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
@@ -46,3 +47,4 @@ As saídas incorporadas vêm de execuções anteriores. A preparação desta pub
 ## Revisão proposta
 
 A branch `revisao/analise-exploratoria-v2` propõe a v2 e seu relatório para revisão antes de merge na main. Corrige seleção temporal, comparabilidade, unidades e ausências, e acrescenta sensibilidades e verificações de retorno, conclusão e estabilidade. A cópia preserva o código analítico, tabelas agregadas e 23 gráficos da última versão consolidada executada. Dois logs de instalação com caminhos pessoais foram removidos. As saídas preservadas não representam uma nova execução nesta etapa de publicação.
+
