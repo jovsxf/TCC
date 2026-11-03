@@ -265,9 +265,10 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 - ~~Aplicar a correção da frequência e rodar de novo a análise exploratória.~~ Feito na base v4 (seção 10).
 - ~~Medir, linha a linha, a sobreposição entre "Inativo" em t−1 e t−1 sem turma ativa.~~ Feito: 206 das 215 linhas sem frequência em t−1 são "Inativo" (seção 3).
 - Atualizar a legenda com a informação de que, na graduação, 96,95% das saídas são lançadas em até 30 dias.
-- Entender os 7 alunos "Inativo" em t−1 sem trancamento no mesmo currículo (seção 11).
-- Confirmar o que são as 78 linhas do semestre da primeira saída com a saída em outra linha (seção 11).
-- Conferir a única linha da v4 com frequência 0 (seção 10).
+- ~~Entender os 7 alunos "Inativo" em t−1 sem trancamento.~~ Conferido: resíduo variado, sem sinal de status gravado depois (seção 11.4).
+- ~~Confirmar o que são as 78 linhas do semestre da primeira saída com a saída em outra linha.~~ Conferido: saída de um vínculo com o aluno continuando em outro (seção 11.5).
+- ~~Conferir a única linha da v4 com frequência 0.~~ Conferido: é um zero real (seção 11.4).
+- **Decisão para a #18:** como tratar as primeiras saídas em vínculos sem matrícula efetivada, que são 19,45% dos alunos com saída (seção 11.6).
 
 ---
 
@@ -282,7 +283,7 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | SHA-256 | `A37D9F2F12CB0A19DF1011BE6BA61D64E644A4C01717714DCD0B62C782DE3646` |
 | Única mudança em relação à v3 | `IA04_01` e `IA04_02` vazios quando o aluno não tem turma ativa no semestre |
 
-Na v4, uma única linha continua com frequência 0. Pela regra nova, isso só acontece se o aluno tem turma ativa e faltou a todas as aulas. Ainda não conferimos esse caso.
+Na v4, uma única linha continua com frequência 0. Pela regra nova, isso só acontece se o aluno tem turma ativa e faltou a todas as aulas. Conferimos no sistema e é o caso (seção 11.4).
 
 Os dois notebooks foram executados de novo na v4, com o mesmo código, sem erros:
 
@@ -362,7 +363,7 @@ Na revisão da PR, o Vinícius apontou três pontos. Os três procediam.
 
 - **As conclusões de vazamento não mudam.** Elas valem para as 1.432 linhas com a saída na própria linha.
 - **Grupos sem mudança:** t−1, semestres mais antigos e alunos sem saída têm os mesmos números de antes.
-- **As 78 linhas são outro caso.** Elas têm perfil de aluno ativo e parecem saídas de um vínculo com o aluno continuando em outro. Há um indício compatível: em 16 semestres, a saída vem depois de uma mudança de curso no mesmo semestre (seção 5). Mas isso não explica as 78, e a hipótese precisa ser confirmada. Os casos tocam na decisão "saída do curso ou da instituição" da #18.
+- **As 78 linhas são outro caso.** Elas têm perfil de aluno ativo. A seção 11.5 confirma que são saídas de um vínculo com o aluno continuando em outro. Os casos tocam na decisão "saída do curso ou da instituição" da #18.
 
 ### 11.2 Matrícula no semestre seguinte
 
@@ -401,7 +402,7 @@ O resultado não muda, porque a extração só traz linhas acadêmicas de semest
 - **Ressalvas:**
   - a data de última alteração cobre qualquer campo da linha, não só a situação;
   - o log cobre poucos casos recentes;
-  - 7 alunos "Inativo" não têm trancamento no mesmo currículo e continuam sem explicação.
+  - 7 alunos "Inativo" não têm trancamento no semestre (seção 11.4).
 
 **Consequências.**
 
@@ -410,4 +411,89 @@ O resultado não muda, porque a extração só traz linhas acadêmicas de semest
   - tratar esse caminho à parte na variável-alvo;
   - deixar o trancamento fora das variáveis;
   - mantê-lo e discutir no artigo.
+
+Os números da base desta seção estão na seção 6 do notebook `temporalidade_campos_v4.ipynb`.
+
+### 11.4 Casos residuais conferidos no sistema
+
+**Os 7 alunos "Inativo" em t−1 sem trancamento** (3,30% dos 212):
+
+- **não há um padrão único:**
+  - 4 têm ingresso por vestibular nesse período, e em 2 deles a saída que vem depois é de outro currículo;
+  - 1 deles também tem prazo de integralização esgotado em t−1;
+  - em 2, a desistência tem data no fim de t−1, mas está ligada ao semestre seguinte;
+  - em 1, a desistência vem dois dias depois do fim de t−1;
+- em 6 dos 7, todas as turmas de t−1 estão ativas, apesar da situação "Inativo";
+- em todos os 7, a última alteração da linha é anterior ao fim do semestre. Também aqui não aparece situação gravada depois.
+
+São poucos e variados, e não mudam a leitura da seção 11.3.
+
+**A única linha com frequência 0 na v4:** o aluno tinha uma turma ativa, com 20 horas de carga e 20 faltas, nenhuma justificada, e foi reprovado. É um zero real, e a regra da extração está correta.
+
+### 11.5 As 78 linhas com a saída em outra linha
+
+| Nas 78 linhas | % |
+|---|---|
+| A saída é de outro currículo do aluno | 100,00% |
+| A saída é de outro curso | 85,90% |
+| Seguiu matriculado no semestre seguinte | 83,33% |
+| Diplomou-se depois | 48,72% |
+| Teve uma nova saída depois | 28,21% |
+| Tem marcação de mudança de curso no semestre | 0,00% |
+
+**Como os dois vínculos se relacionam:**
+
+| Relação | Linhas |
+|---|---|
+| O vínculo que continua começou no semestre da saída | 44 |
+| O vínculo de onde saiu não tem nenhuma linha acadêmica | 33 |
+| Outra | 1 |
+
+**O que o sistema mostra nos 33 vínculos sem linha acadêmica:**
+
+- 31 começaram no próprio semestre da saída e nunca tiveram matrícula efetivada;
+- todos os 33 têm ingresso por vestibular, seguido de cancelamento (24) ou desistência (9).
+
+**Leitura.**
+
+- **São trocas de vínculo dentro do Inatel, e não saídas da instituição no momento em que acontecem.** O aluno sai de um currículo e continua, ou começa, outro.
+- **Nos 33 casos sem linha acadêmica,** o aluno já estudava num curso, passou no vestibular de outro e cancelou ou desistiu antes de começar.
+- **A marcação de "mudança de curso" não captura essas trocas.** Uma regra da #18 que só olhe essa marcação vai tratá-las como evasão.
+
+### 11.6 Primeiras saídas em vínculos sem matrícula efetivada
+
+O padrão dos 33 casos aparece em toda a base:
+
+| Entre os 3.507 alunos com evento de saída | Alunos | % |
+|---|---|---|
+| Primeira saída só em vínculos sem nenhuma linha acadêmica | 682 | 19,45% |
+| ... e com linha acadêmica em outro vínculo | 207 | 5,90% |
+| ... e sem linha acadêmica em nenhum vínculo | 475 | 13,54% |
+
+**O que o sistema mostra nesses 683 vínculos (682 alunos):**
+
+- **nenhum teve semestre com matrícula efetivada.** Os 683 têm semestres registrados só sem matrícula efetivada (605) ou nenhum semestre registrado (78);
+- **alunos sem linha acadêmica em vínculo nenhum (475):**
+  - 98,32% ingressaram no próprio semestre da saída;
+  - 98,53% têm ingresso por vestibular;
+  - 76,63% têm vestibular seguido de cancelamento;
+  - 21,89% têm vestibular seguido de desistência ou abandono;
+- **alunos com linha acadêmica em outro vínculo (207 alunos, 208 vínculos):**
+  - 90,87% dos vínculos têm ingresso por vestibular;
+  - 44,23% ingressaram no semestre da saída e 55,77% antes;
+  - 17,79% têm trancamento registrado.
+
+**Leitura.**
+
+- **Quase 1 em cada 5 alunos com evento de saída saiu de um vínculo em que nunca teve matrícula efetivada.**
+- **Os 475 sem linha acadêmica em nenhum vínculo** são, em quase todos os casos, aprovados no vestibular que cancelaram ou desistiram antes de começar o curso. A base não tem nenhum dado acadêmico deles antes da saída. Isso explica a maior parte das linhas de saída que vêm só de ocorrência.
+- **Os 207 com outro vínculo** saíram de um curso em que não chegaram a estudar, enquanto tinham dados acadêmicos em outro.
+
+**Decisão para a #18 e a orientação.** Contar esses casos como evasão significa misturar dois fenômenos: o abandono de quem cursou e a desistência de quem foi aprovado, mas não começou. As opções são:
+
+- tratar "ingresso não efetivado" como categoria à parte, fora da variável-alvo;
+- analisar esses casos separadamente;
+- mantê-los e registrar a limitação.
+
+No desenho atual, que descreve o aluno em t−1, os 475 já ficam de fora na prática, porque não têm nenhum semestre com dados. Os 207 podem entrar pelo outro vínculo. Mesmo assim, a regra precisa ser explícita, para não inflar a contagem de evasão.
 
