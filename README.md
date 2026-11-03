@@ -42,7 +42,3 @@ Por padrão, a legenda é `Legenda.md` junto ao CSV e o original é o arquivo pu
 O CSV fica fora do GitHub. Não inclua dados de alunos, credenciais ou documentos do OneDrive em commits. As cópias públicas preservam tabelas e gráficos agregados; quatro figuras do original com pontos individuais de outliers foram omitidas. Metadados de sessão foram removidos. O original local anterior à configuração e os arquivos do OneDrive foram preservados.
 
 As saídas incorporadas vêm de execuções anteriores. A preparação desta publicação não executou novamente o notebook nem corrigiu seus cálculos históricos. Ao reexecutar o original, os pontos individuais dessas figuras podem reaparecer; retire essas saídas antes de publicar.
-
-## Revisão proposta
-
-A branch `revisao/analise-exploratoria-v2` propõe a v2 e seu relatório para revisão antes de merge na main. Corrige seleção temporal, comparabilidade, unidades e ausências, e acrescenta sensibilidades e verificações de retorno, conclusão e estabilidade. A cópia preserva o código analítico, tabelas agregadas e 23 gráficos da última versão consolidada executada. Dois logs de instalação com caminhos pessoais foram removidos. As saídas preservadas não representam uma nova execução nesta etapa de publicação.
