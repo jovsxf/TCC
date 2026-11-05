@@ -243,7 +243,7 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 
 **Entram com ressalva:**
 
-- `IA04_01` e `IA04_02` em t−1, usando a base v4 (ou, nas bases anteriores, tratando o 0 como ausente);
+- `IA04_01` e `IA04_02` em t−1, usando a base v4. Nas bases anteriores, o 0 mistura "sem turma ativa" com zero real: na v4, uma linha tem frequência 0 de verdade, porque o aluno faltou a todas as aulas da única turma ativa (seção 11.4). Por isso, não basta tratar todo 0 como ausente; as bases anteriores não devem ser usadas para a frequência;
 - `IA70_*`, que podem ter sido atualizados depois da coleta;
 - `SEXO`, `SIGLACURSO`, `TURNO` e `APROVEIT`, que podem mudar com atualização de cadastro, mudança de curso ou migração;
 - `TEVETRANCAMENTO` em t−1. Ele é conhecido durante o semestre, então não é vazamento no sentido estrito. Mas quem tranca e não volta tende a ter a saída registrada no semestre seguinte, e o modelo aprenderia essa sequência administrativa, e não um fator associado. **Decisão para a #18 e a #26** (seção 11).
@@ -467,7 +467,7 @@ O padrão dos 33 casos aparece em toda a base:
 | Entre os 3.507 alunos com evento de saída | Alunos | % |
 |---|---|---|
 | Primeira saída só em vínculos sem nenhuma linha acadêmica | 682 | 19,45% |
-| ... e com linha acadêmica em outro vínculo | 207 | 5,90% |
+| ... e com linha acadêmica em outro vínculo, em algum momento da extração | 207 | 5,90% |
 | ... e sem linha acadêmica em nenhum vínculo | 475 | 13,54% |
 
 **O que o sistema mostra nesses 683 vínculos (682 alunos):**
@@ -478,7 +478,7 @@ O padrão dos 33 casos aparece em toda a base:
   - 98,53% têm ingresso por vestibular;
   - 76,63% têm vestibular seguido de cancelamento;
   - 21,89% têm vestibular seguido de desistência ou abandono;
-- **alunos com linha acadêmica em outro vínculo (207 alunos, 208 vínculos):**
+- **alunos com linha acadêmica em outro vínculo em algum momento da extração (207 alunos, 208 vínculos):**
   - 90,87% dos vínculos têm ingresso por vestibular;
   - 44,23% ingressaram no semestre da saída e 55,77% antes;
   - 17,79% têm trancamento registrado.
@@ -487,7 +487,15 @@ O padrão dos 33 casos aparece em toda a base:
 
 - **Quase 1 em cada 5 alunos com evento de saída saiu de um vínculo em que nunca teve matrícula efetivada.**
 - **Os 475 sem linha acadêmica em nenhum vínculo** são, em quase todos os casos, aprovados no vestibular que cancelaram ou desistiram antes de começar o curso. A base não tem nenhum dado acadêmico deles antes da saída. Isso explica a maior parte das linhas de saída que vêm só de ocorrência.
-- **Os 207 com outro vínculo** saíram de um curso em que não chegaram a estudar, enquanto tinham dados acadêmicos em outro.
+- **Os 207 com outro vínculo** saíram de um curso em que não chegaram a estudar e têm dados acadêmicos em outro vínculo em algum momento da extração, não necessariamente ao mesmo tempo:
+
+  | Primeiro registro acadêmico do aluno, em relação à primeira saída | Alunos |
+  | --- | --- |
+  | Antes | 118 |
+  | No mesmo semestre | 30 |
+  | Depois | 59 |
+
+  Nos 59 casos em que o primeiro registro acadêmico é posterior, o aluno saiu de um ingresso que não se efetivou e só depois começou a estudar em outro curso.
 
 **Decisão para a #18 e a orientação.** Contar esses casos como evasão significa misturar dois fenômenos: o abandono de quem cursou e a desistência de quem foi aprovado, mas não começou. As opções são:
 
@@ -495,5 +503,5 @@ O padrão dos 33 casos aparece em toda a base:
 - analisar esses casos separadamente;
 - mantê-los e registrar a limitação.
 
-No desenho atual, que descreve o aluno em t−1, os 475 já ficam de fora na prática, porque não têm nenhum semestre com dados. Os 207 podem entrar pelo outro vínculo. Mesmo assim, a regra precisa ser explícita, para não inflar a contagem de evasão.
+No desenho atual, que descreve o aluno em t−1, os 475 já ficam de fora na prática, porque não têm nenhum semestre com dados. Dos 207, só os que já tinham semestres cursados antes da saída (118) podem entrar com uma linha anterior a ela. Nos outros 89, a primeira linha acadêmica é do mesmo semestre da saída ou posterior. Mesmo assim, a regra precisa ser explícita, para não inflar a contagem de evasão.
 
