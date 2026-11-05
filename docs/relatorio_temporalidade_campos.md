@@ -210,7 +210,8 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | Flags de saída, trancamento e transferência (`TEVE*`) | Ocorrências do semestre | Durante o semestre, às vezes nas férias antes dele | **Não** | Sim, as de semestres anteriores | Em t, são o próprio desfecho ou o que acontece junto com ele |
 | `TEVEREINGRESSO`, `TEVEREMATRICULA`, `TEVEMUDANCACURSO`, `TEVEMIGRACAOCURRICULO` | Movimentações administrativas | Início do semestre | Com cuidado | Sim | Vêm antes da saída no mesmo semestre (seção 5) |
 | `TEVEAFASTAMENTOSEMOCORRENCIA`, `TEVEDIPLOMACAO` | Afastamento e diplomação | Depois do semestre | **Não** | **Não** | 91,84% e 72,05% registrados depois do semestre |
-| `TEVEPRAZOESGOTADO`, `TEVEFALECIMENTO` | Prazo esgotado e falecimento | Durante o semestre | **Não** | Decisão da #18 | Usados para exclusão ou definição do alvo, não como variáveis |
+| `TEVEPRAZOESGOTADO` | Prazo de integralização esgotado | Durante o semestre | **Não** | Não é saída nem exclusão (#18) | Descritivo; os estudantes seguem a regra comum de saída formal e retorno |
+| `TEVEFALECIMENTO` | Falecimento | Durante o semestre | **Não** | Excluir da população (#18) | Exclusão de trajetória; não usar como variável |
 | `QUANTIDADEOCORRENCIAS` | Ocorrências do semestre | Durante o semestre | **Não** | Com cuidado | Mistura tipos de antes e de depois da saída |
 | `DATA*` | Datas das ocorrências | Durante ou depois do semestre | **Não** | **Não** | Servem só para ordenar eventos; nunca como variável |
 

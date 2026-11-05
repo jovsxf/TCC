@@ -1,5 +1,7 @@
 # Base v2 e notebook com as novas colunas: o que mudou, por quê e o que falta decidir
 
+> **Atualização (05/11/2026):** o prazo de integralização esgotado não é uma saída nem motivo de exclusão na regra provisória da #18. Os estudantes seguem o critério regular de evento formal e retorno; veja `docs/definicao_variavel_alvo.md` para os resultados na base v4. As pendências abaixo registram o estado histórico da base v2.
+
 Este documento acompanha a nova extração da base, feita em 21 e 22/10/2026, e a versão do notebook que roda sobre ela (`pre_defesa_analise_exploratoria_v2_base_v2_novas_colunas.ipynb`).
 
 Todos os números vêm de contagens agregadas ou das saídas do notebook. Nenhum deles identifica aluno. A base desta versão é a `Base_academica_v2.csv`, que fica na pasta compartilhada do grupo, fora do repositório. A versão anterior, usada na pré-defesa, é o antigo `dados_alunos.csv`.
