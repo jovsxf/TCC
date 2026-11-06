@@ -4,11 +4,13 @@ O modelo não pode usar informação que só existe depois da saída. Este relat
 
 As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre a base v3 (SHA-256 `9CCE803735488354B820F9B1976612AB9D1DE5950EDB91BE57F85C415D6A2343`). Todos os números são agregados.
 
-> **Atualização (27/10/2026):** a análise levou a uma correção na frequência, aplicada na base v4 (`Base_academica_v4.csv`). As seções 2 a 8 descrevem a base v3. O resultado da correção e o que mudou na v4 estão na seção 10.
+> **Atualização (27/10/2026):** a análise levou a uma correção na frequência, aplicada na base v4 (`Base_academica_v4.csv`). O resultado da correção está na seção 10.
+>
+> **Atualização (03/11/2026), revisão da PR #64:** os grupos das seções 2 e 3 foram corrigidos e as tabelas dessas seções passaram a usar a base v4, com o notebook `temporalidade_campos_v4.ipynb`. As seções 4 e 5 não dependem desses grupos e têm os mesmos números na v3 e na v4. O que mudou e por quê, e a investigação dos alunos "Inativo" em t−1, estão na seção 11.
 
 **Termos usados:**
 
-- **semestre da saída (t):** o semestre da primeira saída do aluno;
+- **semestre da saída (t):** o semestre da primeira saída do aluno. Desde a revisão da PR #64, ele é definido pelo semestre, e não pela marcação de saída da própria linha (seção 11);
 - **t−1:** o semestre imediatamente anterior;
 - **evento de saída:** desistência, abandono, cancelamento ou desligamento. Não equivale a evasão definitiva.
 
@@ -16,10 +18,10 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 
 ## 1. Resumo
 
-- **A situação do aluno (`STATUSALUNO`) não pode entrar no modelo, nem em t−1.** Ela é o retrato do fim do semestre: no semestre da saída, 99,93% das linhas estão como "Inativo". Em t−1, 14,24% já estão como "Inativo", contra 2,24% nos semestres mais antigos de quem saiu e 0,62% nos semestres de quem nunca saiu.
-- **No semestre da saída, os indicadores de desempenho não descrevem o semestre.** O CRE do semestre está preenchido em só 4,30% das linhas. Frequência, aprovadas e reprovadas vêm zeradas. Em 96,57% das linhas acadêmicas com saída, o aluno tinha disciplinas matriculadas, mas nenhum resultado no semestre.
+- **A situação do aluno (`STATUSALUNO`) não pode entrar no modelo, nem em t−1.** No semestre da saída, 99,93% das linhas com a saída na própria linha estão como "Inativo". Em t−1, 14,24% já estão como "Inativo", contra 2,24% nos semestres mais antigos de quem saiu e 0,62% nos semestres de quem nunca saiu. Em t−1, o "Inativo" acompanha um trancamento feito durante o semestre (seção 11).
+- **No semestre da saída, os indicadores de desempenho não descrevem o semestre.** Nas linhas com a saída na própria linha, o CRE do semestre está preenchido em só 4,40%, a frequência fica vazia e aprovadas e reprovadas vêm zeradas. Em 96,65% dessas linhas, o aluno tinha disciplinas matriculadas, mas nenhum resultado no semestre.
 - **A frequência zero (`IA04_01` = 0) não era frequência zero.** Na v3, ela aparecia quando o aluno não tinha nenhuma turma ativa no semestre: em 100% das linhas do semestre da saída e em 14,44% das linhas de t−1. **Corrigido na base v4** (seção 10): a frequência agora fica vazia nesses casos, e a diferença de frequência entre casos e referências caiu de −22,440 para −11,446 pontos.
-- **Para cerca de 14% dos casos, t−1 já mostra o aluno parado.** A proporção de "Inativo" em t−1 (14,24%) é parecida com a de t−1 sem turma ativa (14,44%) e reforça a leitura de que, para parte dos alunos, a saída de fato acontece em t−1 e só é registrada em t. Isso entra na definição da variável-alvo (#18).
+- **Para cerca de 14% dos casos, t−1 é um semestre trancado.** Das 212 linhas "Inativo" em t−1, 205 (96,70%) têm trancamento nesse semestre, e 202 desses trancamentos foram feitos durante as aulas. São quase as mesmas linhas sem turma ativa: 206 das 215 linhas sem frequência em t−1 são "Inativo". O caminho mais comum é trancar, não voltar e ter a saída registrada no semestre seguinte. Isso entra na definição da variável-alvo (#18) e na escolha das variáveis (#26).
 - **Na graduação, a data da saída é lançada no sistema quase sempre a tempo.** 96,95% das saídas foram lançadas em até 30 dias. O número de 26,8% com mais de 180 dias, citado no relatório da base v2, incluía a pós-graduação.
 - **Dentro do semestre, as movimentações administrativas vêm antes da saída.** Migração de currículo, rematrícula, reingresso e mudança de curso, quando aparecem junto com uma saída no mesmo semestre, vêm antes dela.
 
@@ -33,13 +35,16 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 
 | Grupo | Linhas | Ativo | Inativo | Desconhecido | Matrícula pendente |
 |---|---|---|---|---|---|
-| Semestre da saída | 1.488 | 0,07% | **99,93%** | 0,00% | 0,00% |
+| Semestre da primeira saída, saída na própria linha | 1.432 | 0,07% | **99,93%** | 0,00% | 0,00% |
+| Semestre da primeira saída, saída em outra linha | 78 | 93,59% | 1,28% | 5,13% | 0,00% |
 | Semestre anterior à saída (t−1) | 1.489 | 84,49% | **14,24%** | 1,01% | 0,27% |
 | Semestres mais antigos de quem saiu | 5.133 | 96,59% | 2,24% | 1,11% | 0,06% |
 | Alunos sem saída | 34.131 | 98,84% | 0,62% | 0,50% | 0,03% |
-| Depois da primeira saída | 2.176 | 97,61% | 2,07% | 0,23% | 0,09% |
+| Depois da primeira saída | 2.154 | 95,22% | 4,64% | 0,05% | 0,09% |
 
-**Situação × matrícula no semestre seguinte** (sem o último semestre da base):
+Base v4. O grupo "depois da primeira saída" inclui 56 linhas com uma nova saída.
+
+**Situação × matrícula no semestre seguinte** (sem o último semestre da base). O notebook exige matrícula efetivada igual a "S". Na base, todas as 44.417 linhas acadêmicas têm matrícula efetivada, porque a própria extração só traz semestres com matrícula efetivada:
 
 | Situação | Linhas | Com matrícula efetivada no semestre seguinte |
 |---|---|---|
@@ -52,7 +57,7 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 
 - A situação é o retrato do semestre **no fim** dele, ou depois. No semestre da saída ela praticamente repete o evento de saída.
 - Em t−1, "Inativo" é cerca de 6 vezes mais frequente do que nos semestres mais antigos de quem saiu. E "Inativo" separa fortemente quem continua de quem não continua: só 10,96% têm matrícula no semestre seguinte.
-- Os dados não permitem distinguir se a situação é marcada no fim do semestre (porque o aluno parou de cursar) ou atualizada depois da saída. Nos dois casos, ela já descreve a decisão de sair.
+- Só com a base, não dava para saber se a situação é marcada durante o semestre ou atualizada depois da saída. A investigação da seção 11 indica que, em t−1, o "Inativo" acompanha um trancamento feito durante o semestre, e não uma atualização posterior.
 
 **Consequência.** `STATUSALUNO` e `CODIGOSTATUSALUNO` não entram no modelo como variáveis explicativas. As análises V1 e V2 do notebook exploratório usam a situação "Ativo" em t−1 como filtro. Elas continuam válidas como sensibilidade, mas é preciso registrar que esse filtro tira justamente os casos em que a saída já aparece em t−1.
 
@@ -62,34 +67,36 @@ As análises estão no notebook `temporalidade_campos_v3.ipynb`, executado sobre
 
 **Preenchimento, zeros e média, por grupo (linhas acadêmicas):**
 
+Base v4. "Semestre da saída" são as 1.432 linhas do semestre da primeira saída com a saída na própria linha. As 78 linhas com a saída em outra linha estão na seção 11.
+
 | Indicador | Semestre da saída | t−1 | Semestres mais antigos | Alunos sem saída |
 |---|---|---|---|---|
-| CRE no semestre: preenchido | **4,30%** | 86,23% | 97,86% | 99,46% |
-| CRE no semestre: zeros entre os preenchidos | 35,94% | 20,79% | 6,89% | 1,32% |
-| CRE acumulado: preenchido | **47,04%** | 90,46% | 98,62% | 99,68% |
-| CRE acumulado: zeros entre os preenchidos | 77,14% | 8,31% | 1,24% | 0,17% |
-| Frequência: zeros (na v4, vazia) | **100,00%** | 14,44% | 2,55% | 0,74% |
-| Disciplinas aprovadas: zeros | **98,45%** | 58,90% | 27,78% | 5,33% |
+| CRE no semestre: preenchido | **4,40%** | 86,23% | 97,86% | 99,46% |
+| CRE no semestre: zeros entre os preenchidos | 34,92% | 20,79% | 6,89% | 1,32% |
+| CRE acumulado: preenchido | **47,00%** | 90,46% | 98,62% | 99,68% |
+| CRE acumulado: zeros entre os preenchidos | 77,86% | 8,31% | 1,24% | 0,17% |
+| Frequência: preenchida | **0,00%** | 85,56% | 97,45% | 99,26% |
+| Disciplinas aprovadas: zeros | **98,46%** | 58,90% | 27,78% | 5,33% |
 | Disciplinas reprovadas: zeros | **100,00%** | 21,29% | 20,69% | 57,13% |
-| Disciplinas matriculadas: média | 4,67 | 4,85 | 5,04 | 5,76 |
+| Disciplinas matriculadas: média | 4,65 | 4,85 | 5,04 | 5,76 |
 | Disciplinas aprovadas: média | 0,03 | 0,94 | 2,09 | 4,28 |
 | Disciplinas reprovadas: média | 0,00 | 2,79 | 2,27 | 0,92 |
 | Disciplinas retiradas/canceladas: média | 0,15 | 0,41 | 0,52 | 0,32 |
-| Atividades complementares matriculadas: média | 1,07 | 1,00 | 1,01 | 1,21 |
+| Atividades complementares matriculadas: média | 1,08 | 1,00 | 1,01 | 1,21 |
 
-**O semestre da saída foi cursado?** Das 1.488 linhas acadêmicas com saída:
+**O semestre da saída foi cursado?** Das 1.432 linhas com a saída na própria linha:
 
 | Situação | Linhas | % |
 |---|---|---|
-| Com disciplinas matriculadas, CRE vazio ou zero | 1.437 | 96,57% |
-| Com disciplinas e CRE positivo | 41 | 2,76% |
-| Sem disciplina matriculada | 10 | 0,67% |
+| Com disciplinas matriculadas, CRE vazio ou zero | 1.384 | 96,65% |
+| Com disciplinas e CRE positivo | 41 | 2,86% |
+| Sem disciplina matriculada | 7 | 0,49% |
 
 **Leitura.**
 
 - No semestre da saída, o aluno costuma estar matriculado em disciplinas, mas sai antes de ter resultado. CRE, frequência, aprovadas e reprovadas desse semestre não descrevem o desempenho: descrevem a saída.
 - **A frequência zero era um artefato.** A frequência só é calculada sobre as turmas em que o aluno está ativo. Sem nenhuma turma ativa, na v3 ela vinha como 0, e não vazia. É o que acontecia em 100% das linhas do semestre da saída. Na v4, ela fica vazia (seção 10).
-- **Em t−1, a mesma marca aparecia em 14,44% das linhas.** Também em t−1, 58,90% das linhas têm zero aprovadas e 20,79% dos CRE preenchidos são zero. A proporção sem turma ativa é parecida com a de "Inativo" em t−1 (14,24%). Isso sugere que, para esses alunos, o abandono de fato já aconteceu em t−1. A sobreposição entre os dois grupos ainda não foi medida linha a linha, mas a seção 10 traz um indício indireto.
+- **Em t−1, 14,44% das linhas não têm turma ativa** (na v3, vinham com frequência zero; na v4, vazia). Também em t−1, 58,90% das linhas têm zero aprovadas e 20,79% dos CRE preenchidos são zero. Medida linha a linha, a sobreposição com "Inativo" é quase total: 206 das 215 linhas sem frequência em t−1 são "Inativo". A seção 11 mostra que são, em quase todos os casos, semestres trancados.
 - As linhas que vêm só de ocorrência não têm esses indicadores (ficam vazias). Na base v2, 93,29% das linhas de saída vindas só de ocorrência não tinham dado acadêmico nenhum.
 
 ## 4. Datas das ocorrências
@@ -193,12 +200,12 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | `APROVEIT` | Semestres aproveitados | Antes do semestre | Sim | Sim | Muda com migração ou mudança de curso |
 | `PERIODO` | Período curricular | Início do semestre | Sim | Sim | — |
 | `MATRICULAEFETIVADA`, `ORIGEMREGISTRO` | Matrícula efetivada e origem da linha | Início do semestre | **Não** | Sim | Em t, a falta de matrícula é a própria saída |
-| `STATUSALUNO`, `CODIGOSTATUSALUNO` | Situação do aluno | Fim do semestre, ou depois | **Não** | **Não** | 99,93% "Inativo" em t; 14,24% "Inativo" em t−1 (seção 2) |
-| `CRENOSEMESTRE` | CRE no semestre | Fim do semestre | **Não** | Sim | Em t, preenchido em 4,30% das linhas |
-| `CREATESEMESTRE`, `MEDIANAATESEMESTRE` | CRE e mediana acumulados | Fim do semestre | **Não** | Sim | Em t, preenchido em 47,04%, e 77,14% dos preenchidos são zero |
+| `STATUSALUNO`, `CODIGOSTATUSALUNO` | Situação do aluno | Fim do semestre, ou depois | **Não** | **Não** | 99,93% "Inativo" em t; 14,24% "Inativo" em t−1, quase sempre por trancamento (seções 2 e 11) |
+| `CRENOSEMESTRE` | CRE no semestre | Fim do semestre | **Não** | Sim | Em t, preenchido em 4,40% das linhas |
+| `CREATESEMESTRE`, `MEDIANAATESEMESTRE` | CRE e mediana acumulados | Fim do semestre | **Não** | Sim | Em t, preenchido em 47,00%, e 77,86% dos preenchidos são zero |
 | `IA04_01`, `IA04_02` | Frequência e disciplinas com >25% de faltas | Fim do semestre | **Não** | Sim | Na v4, vazia quando o aluno não tem turma ativa (seção 10) |
-| `IA75_04`, `ATIVCOMPL_MATRICULADAS` | Disciplinas e atividades matriculadas | Início do semestre | Possível | Sim | Em t, o aluno costuma estar matriculado (média 4,67) |
-| `IA75_03`, `IA34_03`, `IA65_03` | Aprovadas, reprovadas, retiradas | Fim do semestre | **Não** | Sim | Em t, 98,45% zero aprovadas e 100% zero reprovadas |
+| `IA75_04`, `ATIVCOMPL_MATRICULADAS` | Disciplinas e atividades matriculadas | Início do semestre | Possível | Sim | Em t, o aluno costuma estar matriculado (média 4,65) |
+| `IA75_03`, `IA34_03`, `IA65_03` | Aprovadas, reprovadas, retiradas | Fim do semestre | **Não** | Sim | Em t, 98,46% zero aprovadas e 100% zero reprovadas |
 | `ATIVCOMPL_APROVADAS`, `ATIVCOMPL_REPROVADAS` | Resultado das atividades complementares | Fim do semestre | **Não** | Sim | Mesma lógica das disciplinas |
 | `IA75_01`, `IA75_05` | Exigidas pela grade e previstas no período | Antes ou início do semestre | Sim | Sim | Dependem só da grade e do período |
 | `IA75_02` | Concluídas acumuladas | Fim do semestre | **Não** | Sim | Em t, inclui o próprio semestre da saída |
@@ -207,11 +214,10 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | `IA13` | Perda de FIES (t−1 → t) | Início do semestre | **Não** | Sim | Em t, a perda pode ser consequência da saída |
 | `IA09`, `IA09_02`, `IA10_01` | Bolsa negada, motivo e percentual concedido | Início do semestre | **Não** | Sim | Em t, a ausência de processo pode refletir a decisão de sair |
 | `IA70_01` a `IA70_06` | Renda, escolaridade e patrimônio declarados | Início do semestre (processo de bolsa) | **Não** | Sim, com ressalva | Valores mudaram entre extrações com o mesmo número de linhas: podem ser atualizados depois |
-| Flags de saída, trancamento e transferência (`TEVE*`) | Ocorrências do semestre | Durante o semestre, às vezes nas férias antes dele | **Não** | Sim, as de semestres anteriores | Em t, são o próprio desfecho ou o que acontece junto com ele |
+| Flags de saída, trancamento e transferência (`TEVE*`) | Ocorrências do semestre | Durante o semestre, às vezes nas férias antes dele | **Não** | Sim, as de semestres anteriores | Em t, são o próprio desfecho ou o que acontece junto com ele; o CRA esclareceu que `TEVETRANSAFASTAMENTO` é requerimento de transferência para outra instituição e conta como saída formal |
 | `TEVEREINGRESSO`, `TEVEREMATRICULA`, `TEVEMUDANCACURSO`, `TEVEMIGRACAOCURRICULO` | Movimentações administrativas | Início do semestre | Com cuidado | Sim | Vêm antes da saída no mesmo semestre (seção 5) |
 | `TEVEAFASTAMENTOSEMOCORRENCIA`, `TEVEDIPLOMACAO` | Afastamento e diplomação | Depois do semestre | **Não** | **Não** | 91,84% e 72,05% registrados depois do semestre |
-| `TEVEPRAZOESGOTADO` | Prazo de integralização esgotado | Durante o semestre | **Não** | Não é saída nem exclusão (#18) | Descritivo; os estudantes seguem a regra comum de saída formal e retorno |
-| `TEVEFALECIMENTO` | Falecimento | Durante o semestre | **Não** | Excluir da população (#18) | Exclusão de trajetória; não usar como variável |
+| `TEVEPRAZOESGOTADO`, `TEVEFALECIMENTO` | Prazo esgotado e falecimento | Durante o semestre | **Não** | Decisão da #18 | Usados para exclusão ou definição do alvo, não como variáveis |
 | `QUANTIDADEOCORRENCIAS` | Ocorrências do semestre | Durante o semestre | **Não** | Com cuidado | Mistura tipos de antes e de depois da saída |
 | `DATA*` | Datas das ocorrências | Durante ou depois do semestre | **Não** | **Não** | Servem só para ordenar eventos; nunca como variável |
 
@@ -237,16 +243,19 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 
 **Entram com ressalva:**
 
-- `IA04_01` e `IA04_02` em t−1, usando a base v4 (ou, nas bases anteriores, tratando o 0 como ausente);
+- `IA04_01` e `IA04_02` em t−1, usando a base v4. Nas bases anteriores, o 0 mistura "sem turma ativa" com zero real: na v4, uma linha tem frequência 0 de verdade, porque o aluno faltou a todas as aulas da única turma ativa (seção 11.4). Por isso, não basta tratar todo 0 como ausente; as bases anteriores não devem ser usadas para a frequência;
 - `IA70_*`, que podem ter sido atualizados depois da coleta;
-- `SEXO`, `SIGLACURSO`, `TURNO` e `APROVEIT`, que podem mudar com atualização de cadastro, mudança de curso ou migração.
+- `SEXO`, `SIGLACURSO`, `TURNO` e `APROVEIT`, que podem mudar com atualização de cadastro, mudança de curso ou migração;
+- `TEVETRANCAMENTO` em t−1. Ele é conhecido durante o semestre, então não é vazamento no sentido estrito. Mas quem tranca e não volta tende a ter a saída registrada no semestre seguinte, e o modelo aprenderia essa sequência administrativa, e não um fator associado. **Decisão para a #18 e a #26** (seção 11).
 
 ## 8. O que isso muda na #18
 
-- **t−1 nem sempre é "antes da saída".** Em cerca de 14% dos casos, t−1 já mostra o aluno parado ("Inativo", sem turma ativa, sem aprovação). A saída de fato pode ter acontecido em t−1 e só ter sido registrada em t. Opções para levar à orientação:
+- **Em cerca de 14% dos casos, t−1 é um semestre trancado.** O aluno tranca durante as aulas, não volta, e a saída (60,38% abandono) é registrada durante as aulas do semestre seguinte (seção 11). Opções para levar à orientação:
   - manter t−1 e registrar a limitação;
   - usar o último semestre com o aluno cursando (por exemplo, t−2 para esses casos);
+  - tratar "trancou e não voltou" como um caminho à parte na variável-alvo;
   - tratar como sensibilidade, como a V1 já faz ao exigir "Ativo" em t−1.
+- **Saída do curso ou da instituição.** 78 linhas do semestre da primeira saída têm a saída registrada em outra linha do aluno e perfil de aluno ativo (seção 11). Parecem saídas de um vínculo com o aluno continuando em outro, o que depende dessa decisão.
 - **A data da saída é confiável para ordenar eventos na graduação.** Ela é lançada em até 30 dias em 96,95% dos casos. Ainda assim, não indica o dia em que o aluno parou de frequentar.
 - **Episódios:** os 17 casos de reingresso e saída no mesmo semestre mostram que um aluno pode voltar e sair de novo dentro de um semestre só.
 - **Saídas antes de cursar:** 12,92% dos cancelamentos e 7,53% dos trancamentos têm data anterior ao início do semestre a que estão ligados.
@@ -254,8 +263,12 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 ## 9. Pendências
 
 - ~~Aplicar a correção da frequência e rodar de novo a análise exploratória.~~ Feito na base v4 (seção 10).
-- Medir, linha a linha, a sobreposição entre "Inativo" em t−1 e t−1 sem turma ativa.
+- ~~Medir, linha a linha, a sobreposição entre "Inativo" em t−1 e t−1 sem turma ativa.~~ Feito: 206 das 215 linhas sem frequência em t−1 são "Inativo" (seção 3).
 - Atualizar a legenda com a informação de que, na graduação, 96,95% das saídas são lançadas em até 30 dias.
+- ~~Entender os 7 alunos "Inativo" em t−1 sem trancamento.~~ Conferido: resíduo variado, sem sinal de status gravado depois (seção 11.4).
+- ~~Confirmar o que são as 78 linhas do semestre da primeira saída com a saída em outra linha.~~ Conferido: saída de um vínculo com o aluno continuando em outro (seção 11.5).
+- ~~Conferir a única linha da v4 com frequência 0.~~ Conferido: é um zero real (seção 11.4).
+- **Decisão para a #18:** como tratar as primeiras saídas em vínculos sem matrícula efetivada, que são 19,45% dos alunos com saída (seção 11.6).
 
 ---
 
@@ -270,14 +283,14 @@ Na graduação, 96,95% das saídas são lançadas em até 30 dias. A medida do `
 | SHA-256 | `A37D9F2F12CB0A19DF1011BE6BA61D64E644A4C01717714DCD0B62C782DE3646` |
 | Única mudança em relação à v3 | `IA04_01` e `IA04_02` vazios quando o aluno não tem turma ativa no semestre |
 
-Na v4, uma única linha continua com frequência 0. Pela regra nova, isso só acontece se o aluno tem turma ativa e faltou a todas as aulas. Ainda não conferimos esse caso.
+Na v4, uma única linha continua com frequência 0. Pela regra nova, isso só acontece se o aluno tem turma ativa e faltou a todas as aulas. Conferimos no sistema e é o caso (seção 11.4).
 
 Os dois notebooks foram executados de novo na v4, com o mesmo código, sem erros:
 
 - `temporalidade_campos_v4.ipynb`;
 - `pre_defesa_analise_exploratoria_v2_base_v4.ipynb`.
 
-O notebook de temporalidade avisa que o arquivo não é a v3. É o esperado, porque a conferência compara com o hash da v3.
+Desde a revisão da PR #64, o notebook de temporalidade confere o hash da v4.
 
 ### 10.1 Temporalidade (seção 3, na v4)
 
@@ -325,4 +338,170 @@ Mudaram 5 células, todas sobre frequência. Saídas, CRE, disciplinas, finança
 Na v3 isso não acontecia, porque todos os casos tinham frequência, mesmo que fosse um 0 artificial. A comparação de frequência da v4 vale para o subconjunto de 1.260 casos e 15.153 referências.
 
 **Validação numérica:** `IA04_01` e `IA04_02` passaram de 14.642 nulos (24,792% das linhas) para 16.778 (28,409%). A diferença é de 2.136 linhas.
+
+---
+
+## 11. Revisão da PR #64: grupos corrigidos e alunos "Inativo" em t−1
+
+Na revisão da PR, o Vinícius apontou três pontos. Os três procediam.
+
+### 11.1 O grupo "semestre da saída"
+
+**O problema.** O notebook marcava como "semestre da saída" qualquer linha acadêmica com marcação de saída. Isso tinha dois efeitos:
+
+- 56 linhas de saídas **posteriores** à primeira entravam no grupo;
+- 78 linhas do semestre da **primeira** saída ficavam de fora, porque a marcação estava em outra linha do aluno (uma linha de ocorrência ou de outro currículo). Elas caíam em "depois da primeira saída".
+
+**A correção.** Os grupos passaram a ser definidos pelo semestre em relação à primeira saída do aluno. O semestre da primeira saída foi dividido em dois:
+
+| Semestre da primeira saída | Linhas | "Inativo" | Frequência preenchida | Aluno com mais de uma linha acadêmica no semestre | Saída registrada numa linha de ocorrência |
+|---|---|---|---|---|---|
+| Saída na própria linha | 1.432 | 99,93% | 0,00% | 2,30% | 0,84% |
+| Saída em outra linha | 78 | 1,28% | 98,72% | 37,18% | 62,82% |
+
+**Leitura.**
+
+- **As conclusões de vazamento não mudam.** Elas valem para as 1.432 linhas com a saída na própria linha.
+- **Grupos sem mudança:** t−1, semestres mais antigos e alunos sem saída têm os mesmos números de antes.
+- **As 78 linhas são outro caso.** Elas têm perfil de aluno ativo. A seção 11.5 confirma que são saídas de um vínculo com o aluno continuando em outro. Os casos tocam na decisão "saída do curso ou da instituição" da #18.
+
+### 11.2 Matrícula no semestre seguinte
+
+O código contava a presença de uma linha acadêmica no semestre seguinte. Agora ele exige matrícula efetivada igual a "S".
+
+O resultado não muda, porque a extração só traz linhas acadêmicas de semestres com matrícula efetivada. Todas as 44.417 linhas acadêmicas da v4 têm "S". Continua assim: 10,96% dos "Inativo" e 88,69% dos "Ativo" têm matrícula no semestre seguinte.
+
+### 11.3 Os alunos "Inativo" em t−1
+
+**Por que investigamos.** A versão anterior deste relatório dizia que a proporção de "Inativo" em t−1 "reforçava" a leitura de que esses alunos já tinham parado. A situação, sozinha, não mostra quando o aluno deixou de frequentar, então isso era hipótese. Para testá-la, olhamos esses alunos na base e no sistema acadêmico.
+
+**O que a base mostra** (t−1, base v4):
+
+| | "Inativo" (212) | Demais (1.277) |
+|---|---|---|
+| Trancamento em t−1 | 96,70% | 0,31% |
+| CRE do semestre preenchido | 4,72% | 99,77% |
+| Frequência preenchida | 2,83% | 99,30% |
+| Nenhuma disciplina aprovada | 98,11% | 52,39% |
+| Primeira saída foi abandono | 60,38% | 20,91% |
+| Primeira saída foi desistência | 39,62% | 78,78% |
+
+**O que o sistema acadêmico mostra.** Consultamos as datas registradas no sistema para as mesmas 1.489 linhas de t−1, só com contagens agregadas.
+
+| Pergunta | Resultado |
+|---|---|
+| Quando foi o trancamento? | Dos 205 alunos "Inativo" com trancamento no mesmo currículo, 202 trancaram durante as aulas de t−1 e 3 depois das aulas, antes do fim do semestre |
+| Quando foi a saída? | Nos "Inativo", 203 das 212 saídas têm data durante as aulas do semestre seguinte. Nos demais, 1.085 de 1.277 |
+| A linha de t−1 foi alterada depois do fim do semestre? | A última alteração caiu depois do fim do semestre em 39,62% dos "Inativo" e em 42,76% dos demais. Em mais de 6 meses depois, 2,36% e 11,43% |
+| O log de alterações mostra mudança depois do semestre? | O log existe só desde janeiro de 2024 e cobre 13 dos 212 "Inativo" e 31 dos demais. Em nenhum dos dois grupos há alteração depois do fim de t−1 |
+
+**Leitura.**
+
+- **O caminho mais comum:** o aluno tranca durante as aulas, a situação do semestre fica "Inativo", ele não volta, e a saída (na maioria, abandono) é registrada durante as aulas do semestre seguinte.
+- **Não encontramos sinal de que a situação foi reescrita depois.** O trancamento tem data dentro do semestre. As alterações tardias da linha são tão comuns nos demais alunos quanto nos "Inativo", então são rotina do sistema. E, onde há log, não há mudança depois do semestre.
+- **Ressalvas:**
+  - a data de última alteração cobre qualquer campo da linha, não só a situação;
+  - o log cobre poucos casos recentes;
+  - 7 alunos "Inativo" não têm trancamento no semestre (seção 11.4).
+
+**Consequências.**
+
+- **A situação continua fora do modelo** (seção 7). Em t−1, ela praticamente repete o trancamento.
+- **O trancamento em t−1 é conhecido antes da saída,** mas usá-lo como variável faria o modelo aprender a sequência "trancou e não voltou". Para a #18 e a #26, a decisão é do grupo e da orientação. As opções são:
+  - tratar esse caminho à parte na variável-alvo;
+  - deixar o trancamento fora das variáveis;
+  - mantê-lo e discutir no artigo.
+
+Os números da base desta seção estão na seção 6 do notebook `temporalidade_campos_v4.ipynb`.
+
+### 11.4 Casos residuais conferidos no sistema
+
+**Os 7 alunos "Inativo" em t−1 sem trancamento** (3,30% dos 212):
+
+- **não há um padrão único:**
+  - 4 têm ingresso por vestibular nesse período, e em 2 deles a saída que vem depois é de outro currículo;
+  - 1 deles também tem prazo de integralização esgotado em t−1;
+  - em 2, a desistência tem data no fim de t−1, mas está ligada ao semestre seguinte;
+  - em 1, a desistência vem dois dias depois do fim de t−1;
+- em 6 dos 7, todas as turmas de t−1 estão ativas, apesar da situação "Inativo";
+- em todos os 7, a última alteração da linha é anterior ao fim do semestre. Também aqui não aparece situação gravada depois.
+
+São poucos e variados, e não mudam a leitura da seção 11.3.
+
+**A única linha com frequência 0 na v4:** o aluno tinha uma turma ativa, com 20 horas de carga e 20 faltas, nenhuma justificada, e foi reprovado. É um zero real, e a regra da extração está correta.
+
+### 11.5 As 78 linhas com a saída em outra linha
+
+| Nas 78 linhas | % |
+|---|---|
+| A saída é de outro currículo do aluno | 100,00% |
+| A saída é de outro curso | 85,90% |
+| Seguiu matriculado no semestre seguinte | 83,33% |
+| Diplomou-se depois | 48,72% |
+| Teve uma nova saída depois | 28,21% |
+| Tem marcação de mudança de curso no semestre | 0,00% |
+
+**Como os dois vínculos se relacionam:**
+
+| Relação | Linhas |
+|---|---|
+| O vínculo que continua começou no semestre da saída | 44 |
+| O vínculo de onde saiu não tem nenhuma linha acadêmica | 33 |
+| Outra | 1 |
+
+**O que o sistema mostra nos 33 vínculos sem linha acadêmica:**
+
+- 31 começaram no próprio semestre da saída e nunca tiveram matrícula efetivada;
+- todos os 33 têm ingresso por vestibular, seguido de cancelamento (24) ou desistência (9).
+
+**Leitura.**
+
+- **São trocas de vínculo dentro do Inatel, e não saídas da instituição no momento em que acontecem.** O aluno sai de um currículo e continua, ou começa, outro.
+- **Nos 33 casos sem linha acadêmica,** o aluno já estudava num curso, passou no vestibular de outro e cancelou ou desistiu antes de começar.
+- **A marcação de "mudança de curso" não captura essas trocas.** Uma regra da #18 que só olhe essa marcação vai tratá-las como evasão.
+
+### 11.6 Primeiras saídas em vínculos sem matrícula efetivada
+
+O padrão dos 33 casos aparece em toda a base:
+
+| Entre os 3.507 alunos com evento de saída | Alunos | % |
+|---|---|---|
+| Primeira saída só em vínculos sem nenhuma linha acadêmica | 682 | 19,45% |
+| ... e com linha acadêmica em outro vínculo, em algum momento da extração | 207 | 5,90% |
+| ... e sem linha acadêmica em nenhum vínculo | 475 | 13,54% |
+
+**O que o sistema mostra nesses 683 vínculos (682 alunos):**
+
+- **nenhum teve semestre com matrícula efetivada.** Os 683 têm semestres registrados só sem matrícula efetivada (605) ou nenhum semestre registrado (78);
+- **alunos sem linha acadêmica em vínculo nenhum (475):**
+  - 98,32% ingressaram no próprio semestre da saída;
+  - 98,53% têm ingresso por vestibular;
+  - 76,63% têm vestibular seguido de cancelamento;
+  - 21,89% têm vestibular seguido de desistência ou abandono;
+- **alunos com linha acadêmica em outro vínculo em algum momento da extração (207 alunos, 208 vínculos):**
+  - 90,87% dos vínculos têm ingresso por vestibular;
+  - 44,23% ingressaram no semestre da saída e 55,77% antes;
+  - 17,79% têm trancamento registrado.
+
+**Leitura.**
+
+- **Quase 1 em cada 5 alunos com evento de saída saiu de um vínculo em que nunca teve matrícula efetivada.**
+- **Os 475 sem linha acadêmica em nenhum vínculo** são, em quase todos os casos, aprovados no vestibular que cancelaram ou desistiram antes de começar o curso. A base não tem nenhum dado acadêmico deles antes da saída. Isso explica a maior parte das linhas de saída que vêm só de ocorrência.
+- **Os 207 com outro vínculo** saíram de um curso em que não chegaram a estudar e têm dados acadêmicos em outro vínculo em algum momento da extração, não necessariamente ao mesmo tempo:
+
+  | Primeiro registro acadêmico do aluno, em relação à primeira saída | Alunos |
+  | --- | --- |
+  | Antes | 118 |
+  | No mesmo semestre | 30 |
+  | Depois | 59 |
+
+  Nos 59 casos em que o primeiro registro acadêmico é posterior, o aluno saiu de um ingresso que não se efetivou e só depois começou a estudar em outro curso.
+
+**Decisão para a #18 e a orientação.** Contar esses casos como evasão significa misturar dois fenômenos: o abandono de quem cursou e a desistência de quem foi aprovado, mas não começou. As opções são:
+
+- tratar "ingresso não efetivado" como categoria à parte, fora da variável-alvo;
+- analisar esses casos separadamente;
+- mantê-los e registrar a limitação.
+
+No desenho atual, que descreve o aluno em t−1, os 475 já ficam de fora na prática, porque não têm nenhum semestre com dados. Dos 207, só os que já tinham semestres cursados antes da saída (118) podem entrar com uma linha anterior a ela. Nos outros 89, a primeira linha acadêmica é do mesmo semestre da saída ou posterior. Mesmo assim, a regra precisa ser explícita, para não inflar a contagem de evasão.
 

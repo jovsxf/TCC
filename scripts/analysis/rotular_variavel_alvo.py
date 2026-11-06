@@ -22,6 +22,7 @@ EXIT_FLAGS = [
     "TEVEABANDONO",
     "TEVECANCELAMENTO",
     "TEVEDESLIGAMENTO",
+    "TEVETRANSAFASTAMENTO",
 ]
 FLAGS = [
     "TEVEDESISTENCIA",
@@ -111,23 +112,52 @@ def load_data() -> tuple[pd.DataFrame, dict[str, object]]:
 
 
 def build_indexes(df: pd.DataFrame) -> dict[str, object]:
-    academic = df.loc[
+    academic_source = df.loc[
         df["ORIGEMREGISTRO"].eq("ACADEMICA"), ["HANDLEALUNO", "SEM"]
     ].drop_duplicates()
+    raw_terms_by_student = {
+        student: np.sort(group["SEM"].unique().astype(int))
+        for student, group in academic_source.groupby("HANDLEALUNO", sort=False)
+    }
+    trancamento_source = df.loc[
+        df["TEVETRANCAMENTO"].eq(1) & df["ORIGEMREGISTRO"].eq("ACADEMICA"),
+        ["HANDLEALUNO", "SEM"],
+    ].drop_duplicates()
+    trancamento_by_student = {
+        student: set(group["SEM"].astype(int))
+        for student, group in trancamento_source.groupby("HANDLEALUNO", sort=False)
+    }
+    trancamento_pairs = set(
+        map(tuple, trancamento_source[["HANDLEALUNO", "SEM"]].itertuples(index=False, name=None))
+    )
+    academic = academic_source.loc[
+        ~academic_source[["HANDLEALUNO", "SEM"]]
+        .apply(tuple, axis=1)
+        .isin(trancamento_pairs)
+    ].copy()
     terms_by_student = {
         student: np.sort(group["SEM"].unique().astype(int))
         for student, group in academic.groupby("HANDLEALUNO", sort=False)
     }
+    academic_students_before_trancamento = int(academic_source["HANDLEALUNO"].nunique())
 
     exits = df.loc[df[EXIT_FLAGS].eq(1).any(axis=1), ["HANDLEALUNO", "SEM"]]
     exits_by_student = {
         student: np.sort(group["SEM"].unique().astype(int))
         for student, group in exits.groupby("HANDLEALUNO", sort=False)
     }
+    historical_exits = df.loc[df[EXIT_FLAGS[:-1]].eq(1).any(axis=1), ["HANDLEALUNO", "SEM"]]
+    historical_exits_by_student = {
+        student: np.sort(group["SEM"].unique().astype(int))
+        for student, group in historical_exits.groupby("HANDLEALUNO", sort=False)
+    }
 
     return {
         "terms": terms_by_student,
+        "terms_before_trancamento": raw_terms_by_student,
+        "trancamento": trancamento_by_student,
         "exits": exits_by_student,
+        "historical_exits": historical_exits_by_student,
         "deceased": set(df.loc[df["TEVEFALECIMENTO"].eq(1), "HANDLEALUNO"]),
         "graduates": set(df.loc[df["TEVEDIPLOMACAO"].eq(1), "HANDLEALUNO"]),
         "gae": set(df.loc[df["SIGLACURSO"].eq("GAE"), "HANDLEALUNO"]),
@@ -158,6 +188,9 @@ def build_indexes(df: pd.DataFrame) -> dict[str, object]:
             .groupby("HANDLEALUNO", sort=False)
         },
         "academic_rows": int(len(academic)),
+        "academic_rows_before_trancamento": int(len(academic_source)),
+        "academic_semesters_flagged_trancamento": int(len(trancamento_source)),
+        "academic_students_before_trancamento": academic_students_before_trancamento,
         "academic_source_rows": int(df["ORIGEMREGISTRO"].eq("ACADEMICA").sum()),
         "multiple_curriculum_student_semesters": int(
             df.loc[df["ORIGEMREGISTRO"].eq("ACADEMICA")]
@@ -184,6 +217,7 @@ def summarize_n(
     deceased = indexes["deceased"]
     graduates = indexes["graduates"]
     gae = indexes["gae"]
+    trancamento = indexes["trancamento"]
 
     counts: Counter[str] = Counter()
     positive_students: set[str] = set()
@@ -191,15 +225,21 @@ def summarize_n(
     no_prior_usable_students: set[str] = set()
     gap_distribution: Counter[int] = Counter()
 
-    for student, terms in terms_by_student.items():
+    all_students = set(terms_by_student) | set(trancamento)
+    for student in all_students:
+        terms = terms_by_student.get(student, np.array([], dtype=int))
         # Death and GAE cases are provisionally excluded at student level.
         # TEVEPRAZOESGOTADO is descriptive status, not an exit or exclusion.
         if student in deceased:
-            counts["excluidas_falecimento"] += len(terms)
+            counts["excluidas_falecimento"] += len(terms) + len(trancamento.get(student, set()))
             continue
         if exclude_special and student in gae:
-            counts["excluidas_GAE"] += len(terms)
+            counts["excluidas_GAE"] += len(terms) + len(trancamento.get(student, set()))
             continue
+        counts["excluidas_trancamento"] += len(trancamento.get(student, set()))
+        student_exit_sems = set(map(int, exits_by_student.get(student, [])))
+        # Always remove a semester containing a formal exit, including episodes
+        # followed by a return; the exit semester may contain incomplete data.
         decision: dict[str, int | str] | None = None
         for exit_sem in exits_by_student.get(student, []):
             before_or_same = terms[terms <= exit_sem]
@@ -211,7 +251,7 @@ def summarize_n(
             if returned:
                 continue
 
-            usable_before_exit = terms[terms < exit_sem]
+            usable_before_exit = terms[(terms < exit_sem) & ~np.isin(terms, list(student_exit_sems))]
             positive_sem = int(usable_before_exit[-1]) if len(usable_before_exit) else None
             if anchor + n <= last_semester:
                 decision = {
@@ -229,6 +269,19 @@ def summarize_n(
                 }
             break
 
+        considered_exit_sems = (
+            [exit_sem for exit_sem in student_exit_sems if exit_sem < int(decision["exit_sem"])]
+            if decision
+            else list(student_exit_sems)
+        )
+        returned_exit_sems = {
+            exit_sem
+            for exit_sem in considered_exit_sems
+            if bool(((terms > exit_sem) & (terms <= exit_sem + n)).any())
+            and bool((terms == exit_sem).any())
+        }
+        counts["semestres_saida_com_retorno"] += len(returned_exit_sems)
+
         if decision and decision["kind"] in {"confirmed", "incomplete"}:
             exit_sem = int(decision["exit_sem"])
             positive_sem = decision["positive_sem"]
@@ -243,8 +296,9 @@ def summarize_n(
                 if term > exit_sem:
                     counts["excluidas_apos_primeiro_episodio"] += int((terms > exit_sem).sum())
                     break
-                if term == exit_sem:
+                if term in student_exit_sems:
                     counts["excluidas_semestre_da_saida"] += 1
+                    continue
                 elif positive_sem is not None and term == positive_sem:
                     if confirmed:
                         counts["positivas"] += 1
@@ -261,7 +315,9 @@ def summarize_n(
         # excluded for lack of a formal exit according to the current rule.
         for index, term in enumerate(terms):
             term = int(term)
-            if index < len(terms) - 1 or student in graduates:
+            if term in student_exit_sems:
+                counts["excluidas_semestre_da_saida"] += 1
+            elif index < len(terms) - 1 or student in graduates:
                 counts["negativas"] += 1
             elif term + n > last_semester:
                 counts["excluidas_ainda_sem_desfecho"] += 1
@@ -283,6 +339,9 @@ def summarize_n(
         "alunos_com_linha_positiva": len(positive_students),
         "alunos_evadidos_confirmados": len(evaded_students),
         "evadidos_sem_semestre_anterior_utilizavel": len(no_prior_usable_students),
+        "semestres_de_saida_com_retorno_excluidos": int(
+            counts.get("semestres_saida_com_retorno", 0)
+        ),
         "distancia_semestre_positivo_ate_saida_formal": {
             str(gap): int(value) for gap, value in sorted(gap_distribution.items())
         },
@@ -296,8 +355,8 @@ def summarize_n(
 
 def legacy_reference_n2(indexes: dict[str, object], last_semester: int) -> dict[str, object]:
     """Reproduce guide's old event-semester window for source cross-check only."""
-    terms_by_student = indexes["terms"]
-    exits_by_student = indexes["exits"]
+    terms_by_student = indexes["terms_before_trancamento"]
+    exits_by_student = indexes["historical_exits"]
     deceased = indexes["deceased"]
     graduates = indexes["graduates"]
     counts: Counter[str] = Counter()
@@ -357,8 +416,10 @@ def legacy_reference_n2(indexes: dict[str, object], last_semester: int) -> dict[
     }
 
 
-def return_curve(indexes: dict[str, object], last_semester: int) -> list[dict[str, object]]:
-    """Return curve aligned to the proposed clock: last course before first exit."""
+def return_curve(
+    indexes: dict[str, object], last_semester: int, *, window_start: str = "semestre_evento"
+) -> list[dict[str, object]]:
+    """Return curve measured from either the formal exit or last course semester."""
     terms_by_student = indexes["terms"]
     exits_by_student = indexes["exits"]
     excluded = indexes["deceased"] | indexes["gae"]
@@ -374,9 +435,10 @@ def return_curve(indexes: dict[str, object], last_semester: int) -> list[dict[st
         if not len(prior):
             continue
         last_course = int(prior[-1])
-        later = terms[terms > last_course]
-        delay = int(later[0] - last_course) if len(later) else None
-        cohort.append((last_semester - last_course, delay))
+        anchor = int(exits[0]) if window_start == "semestre_evento" else last_course
+        later = terms[terms > anchor]
+        delay = int(later[0] - anchor) if len(later) else None
+        cohort.append((last_semester - anchor, delay))
 
     curve: list[dict[str, object]] = []
     for k in range(1, 11):
@@ -404,19 +466,18 @@ def main() -> None:
     last_semester = int(source_info["semestre_final"])
 
     results = [
-        summarize_n(indexes, last_semester, n, exclude_special=True)
-        for n in (1, 2, 3)
+        summarize_n(indexes, last_semester, 4, exclude_special=True, window_start="semestre_evento"),
+        summarize_n(indexes, last_semester, 2, exclude_special=True, window_start="semestre_evento"),
     ]
-    event_clock_n2 = summarize_n(
-        indexes,
-        last_semester,
-        2,
-        exclude_special=True,
-        window_start="semestre_evento",
+    course_clock_n4 = summarize_n(
+        indexes, last_semester, 4, exclude_special=True, window_start="ultimo_semestre_cursado"
     )
     legacy_n2 = legacy_reference_n2(indexes, last_semester)
 
     special = {
+        "alunos_com_semestre_academico_antes_de_remover_trancamentos": indexes[
+            "academic_students_before_trancamento"
+        ],
         "alunos_com_semestre_academico": len(indexes["terms"]),
         "alunos_falecidos": len(indexes["deceased"]),
         "alunos_GAE": len(indexes["gae"]),
@@ -434,6 +495,13 @@ def main() -> None:
         ),
         "linhas_fonte_academica": indexes["academic_source_rows"],
         "aluno_semestres_academicos_unicos": indexes["academic_rows"],
+        "aluno_semestres_academicos_antes_de_remover_trancamentos": indexes[
+            "academic_rows_before_trancamento"
+        ],
+        "aluno_semestres_academicos_com_flag_trancamento": indexes[
+            "academic_semesters_flagged_trancamento"
+        ],
+        "aluno_semestres_academicos_apos_remover_trancamentos": indexes["academic_rows"],
         "aluno_semestres_com_multiplos_curriculos": indexes[
             "multiple_curriculum_student_semesters"
         ],
@@ -512,10 +580,10 @@ def main() -> None:
                 "populacao": special,
                 "seguimento_prazo_esgotado": deadline_followup,
                 "resultados_regra_corrigida": results,
-                "curva_retorno_ancorada_ultimo_semestre_cursado": return_curve(
+                "curva_retorno_ancorada_no_semestre_da_saida": return_curve(
                     indexes, last_semester
                 ),
-                "sensibilidade_N2_janela_iniciada_na_saida_formal": event_clock_n2,
+                "sensibilidade_N4_janela_iniciada_no_ultimo_semestre_cursado": course_clock_n4,
                 "referencia_guia_N2_codigo_antigo": legacy_n2,
             },
             ensure_ascii=False,

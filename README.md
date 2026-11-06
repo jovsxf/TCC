@@ -9,15 +9,12 @@
 - `docs/relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
 - `pre_defesa_analise_exploratoria_v2_base_v3_legenda_v2.ipynb`: v2 executada sobre a base v3 (`Base_academica_v3.csv`), com os indicadores de disciplinas corrigidos e a legenda v2.
 - `docs/relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
-- `docs/relatorio_temporalidade_campos.md`: análise da disponibilidade temporal e prevenção de vazamento.
+- `relatorio_temporalidade_campos.md`: análise da disponibilidade temporal e prevenção de vazamento.
 - `docs/definicao_variavel_alvo.md`: definição proposta para a variável-alvo da issue #18 e status da quantificação.
-- `scripts/analysis/rotular_variavel_alvo.py`: cálculo agregado e reproduzível dos rótulos e exclusões para N = 1, 2 e 3.
-- `docs/decisoes_metricas_modelagem.md`: métricas, critério principal e limiar da etapa de modelagem.
-- `docs/inventario_decisoes_base.md`: estrutura conhecida, divergências da legenda e decisões de tratamento.
-- `docs/Decisões da reunião do TCC.md`: decisões e pendências metodológicas do grupo, com atualização sobre prazo esgotado.
+- `scripts/analysis/rotular_variavel_alvo.py`: cálculo agregado e reproduzível dos rótulos e exclusões para N = 4 e sensibilidade N = 2.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
-Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
+Eventos de desistência, abandono, cancelamento, desligamento e transferência-afastamento para outra instituição são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
 
 ## Dependências e execução
 
@@ -30,7 +27,7 @@ python -m pip install pandas numpy matplotlib scipy ipython jupyterlab
 Execute a partir da pasta do repositório. Configure o CSV externo (exemplo genérico):
 
 ```powershell
-$env:TCC_CSV_PATH = "D:\dados_privados\Base_academica_v3.csv"
+$env:TCC_CSV_PATH = "D:\dados_privados\Base_academica_v4.csv"
 python -m jupyterlab
 ```
 
