@@ -1,0 +1,592 @@
+{
+  "verified_on": "2026-11-06",
+  "source_hash": "a37d9f2f12cb0a19df1011be6ba61d64e644a4c01717714dcd0b62c782de3646",
+  "source_columns": 81,
+  "columns_read": 79,
+  "rows": 59059,
+  "students": 7615,
+  "origins": {
+    "ACADEMICA": 44417,
+    "OCORRENCIA": 14642
+  },
+  "student_semesters": 48200,
+  "logical_key_missing_rows": 0,
+  "logical_key_duplicate_rows": 0,
+  "full_loaded_row_duplicates": 0,
+  "multiple_values_per_student_semester": {
+    "HANDLEALUNOCURRICULO": 8825,
+    "HANDLEALUNOANOSEMESTRE": 1104,
+    "SIGLACURSO": 972
+  },
+  "multiple_academic_records_student_semester": 47,
+  "flags_checked": 18,
+  "flag_quality": [
+    {
+      "column": "TEVEDESISTENCIA",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEABANDONO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVETRANCAMENTO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVECANCELAMENTO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEDESLIGAMENTO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVETRANSAFASTAMENTO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEDIPLOMACAO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVECONCLUSAOPROGRAMA",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEREINGRESSO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEMUDANCACURSO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEMIGRACAOCURRICULO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEREMATRICULA",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEFALECIMENTO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEPRAZOESGOTADO",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "TEVEAFASTAMENTOSEMOCORRENCIA",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "IA09",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "IA12",
+      "missing": 0,
+      "invalid": 0
+    },
+    {
+      "column": "IA13",
+      "missing": 0,
+      "invalid": 0
+    }
+  ],
+  "numeric_quality": [
+    {
+      "column": "CRENOSEMESTRE",
+      "missing": 16421,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 0,
+      "noninteger_if_count": null,
+      "explicit_zero": 1194
+    },
+    {
+      "column": "CREATESEMESTRE",
+      "missing": 14209,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 0,
+      "noninteger_if_count": null,
+      "explicit_zero": 1289
+    },
+    {
+      "column": "MEDIANAATESEMESTRE",
+      "missing": 16428,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 0,
+      "noninteger_if_count": null,
+      "explicit_zero": 784
+    },
+    {
+      "column": "VALORMENSALIDADE",
+      "missing": 1623,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 0
+    },
+    {
+      "column": "IA04_01",
+      "missing": 16778,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 2,
+      "noninteger_if_count": null,
+      "explicit_zero": 1
+    },
+    {
+      "column": "IA04_02",
+      "missing": 16778,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 36869
+    },
+    {
+      "column": "IA10_01",
+      "missing": 40863,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 0,
+      "noninteger_if_count": null,
+      "explicit_zero": 855
+    },
+    {
+      "column": "IA12_01",
+      "missing": 56659,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": 0,
+      "noninteger_if_count": null,
+      "explicit_zero": 0
+    },
+    {
+      "column": "IA75_01",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 0
+    },
+    {
+      "column": "IA75_02",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 2411
+    },
+    {
+      "column": "IA75_03",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 5872
+    },
+    {
+      "column": "IA75_04",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 329
+    },
+    {
+      "column": "IA75_05",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 34
+    },
+    {
+      "column": "IA34_03",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 23377
+    },
+    {
+      "column": "IA65_03",
+      "missing": 14642,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": 0,
+      "explicit_zero": 35656
+    },
+    {
+      "column": "IA70_01",
+      "missing": 43869,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 5184
+    },
+    {
+      "column": "IA70_03",
+      "missing": 43869,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 8314
+    },
+    {
+      "column": "IA70_05",
+      "missing": 43869,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 5666
+    },
+    {
+      "column": "PERIODO",
+      "missing": 14479,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 33
+    },
+    {
+      "column": "APROVEIT",
+      "missing": 50287,
+      "parse_failed": 0,
+      "negative": 0,
+      "above100_if_scale100": null,
+      "noninteger_if_count": null,
+      "explicit_zero": 0
+    }
+  ],
+  "date_quality": [
+    {
+      "column": "DATADESISTENCIA",
+      "known": 2313,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAABANDONO",
+      "known": 761,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATATRANCAMENTO",
+      "known": 1727,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATACANCELAMENTO",
+      "known": 766,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATADESLIGAMENTO",
+      "known": 1,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATATRANSAFASTAMENTO",
+      "known": 325,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATADIPLOMACAO",
+      "known": 2644,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATACONCLUSAOPROGRAMA",
+      "known": 0,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAREINGRESSO",
+      "known": 253,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAMUDANCACURSO",
+      "known": 892,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAMIGRACAOCURRICULO",
+      "known": 4445,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAPRIMEIRASAIDA",
+      "known": 3841,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAULTIMASAIDA",
+      "known": 3841,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAINCLUSAOSAIDA",
+      "known": 3841,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAREMATRICULA",
+      "known": 593,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAFALECIMENTO",
+      "known": 15,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAPRAZOESGOTADO",
+      "known": 26,
+      "failed": 0,
+      "with_time": 0
+    },
+    {
+      "column": "DATAAFASTAMENTOSEMOCORRENCIA",
+      "known": 331,
+      "failed": 0,
+      "with_time": 0
+    }
+  ],
+  "flag_date_pairs": [
+    {
+      "flag": "TEVEDESISTENCIA",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEABANDONO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVETRANCAMENTO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVECANCELAMENTO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEDESLIGAMENTO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVETRANSAFASTAMENTO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEDIPLOMACAO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVECONCLUSAOPROGRAMA",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEREINGRESSO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEMUDANCACURSO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEMIGRACAOCURRICULO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEREMATRICULA",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEFALECIMENTO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEPRAZOESGOTADO",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    },
+    {
+      "flag": "TEVEAFASTAMENTOSEMOCORRENCIA",
+      "positive_without_date": 0,
+      "negative_with_date": 0
+    }
+  ],
+  "status_code_label_mismatches": 0,
+  "academic_counts": [
+    {
+      "column": "IA75_03",
+      "academic_evaluable": 44417,
+      "academic_above_enrolled": 0,
+      "occurrence_evaluable": 0
+    },
+    {
+      "column": "IA34_03",
+      "academic_evaluable": 44417,
+      "academic_above_enrolled": 0,
+      "occurrence_evaluable": 0
+    }
+  ],
+  "frequency": {
+    "source_missing": 16778,
+    "academic_missing": 2136,
+    "occurrence_missing": 14642,
+    "zero": 1,
+    "over100": 2,
+    "max": 100.56
+  },
+  "special": {
+    "gae_rows": 27,
+    "gae_students": 26,
+    "death_rows": 15,
+    "death_students": 14
+  },
+  "status_audits": {
+    "four_historical_flags": {
+      "exit_students": 3507,
+      "no_exit_students": 4108,
+      "status_classification": {
+        "single_known": 3147,
+        "undefined": 946,
+        "conflict": 15
+      },
+      "conflict_last_rows": 30,
+      "conflict_rows_by_origin": {
+        "OCORRENCIA": 15,
+        "ACADEMICA": 15
+      },
+      "conflict_academic_status": {
+        "Ativo": 15
+      },
+      "conflict_occurrence_status": {
+        "Matrícula Pendente": 14,
+        "Inativo": 1
+      },
+      "undefined_with_known_academic_students": 876,
+      "undefined_known_academic_status": {
+        "Ativo": 857,
+        "Inativo": 17,
+        "Matrícula Pendente": 2
+      },
+      "undefined_without_known_academic_students": 70,
+      "strict_previous_selection": {
+        "no_academic_before": 1627,
+        "ambiguous_latest_prior": 1,
+        "unique_immediate": 1489,
+        "unique_with_gap": 390
+      },
+      "same_row_active_and_exit": {
+        "academic": 1,
+        "occurrence": 1
+      }
+    },
+    "five_including_transfer": {
+      "exit_students": 3798,
+      "no_exit_students": 3817,
+      "status_classification": {
+        "single_known": 2911,
+        "undefined": 891,
+        "conflict": 15
+      },
+      "conflict_last_rows": 30,
+      "conflict_rows_by_origin": {
+        "OCORRENCIA": 15,
+        "ACADEMICA": 15
+      },
+      "conflict_academic_status": {
+        "Ativo": 15
+      },
+      "conflict_occurrence_status": {
+        "Matrícula Pendente": 14,
+        "Inativo": 1
+      },
+      "undefined_with_known_academic_students": 870,
+      "undefined_known_academic_status": {
+        "Ativo": 856,
+        "Inativo": 12,
+        "Matrícula Pendente": 2
+      },
+      "undefined_without_known_academic_students": 21,
+      "strict_previous_selection": {
+        "no_academic_before": 1631,
+        "ambiguous_latest_prior": 2,
+        "unique_immediate": 1762,
+        "unique_with_gap": 403
+      },
+      "same_row_active_and_exit": {
+        "academic": 1,
+        "occurrence": 1
+      }
+    }
+  },
+  "source_unchanged": true
+}
