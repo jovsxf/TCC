@@ -4,14 +4,17 @@
 
 - `pre_defesa_analise_exploratoria.ipynb`: notebook original como referência histórica. Seus cálculos e resultados anteriores à revisão foram preservados; o caminho fixo do CSV foi substituído por configuração.
 - `pre_defesa_analise_exploratoria_v2.ipynb`: revisão proposta da análise, com saída validada anteriormente, critérios explícitos e sensibilidades.
-- `relatorio_alteracoes_v2.md`: auditoria por seção, resultados reconciliados, limitações e ajustes de publicação.
+- `docs/relatorio_alteracoes_v2.md`: auditoria por seção, resultados reconciliados, limitações e ajustes de publicação.
 - `pre_defesa_analise_exploratoria_v2_base_v2_novas_colunas.ipynb`: v2 executada sobre a nova extração da base (com datas das ocorrências, correções e indicadores novos), com três células de análise a mais (59–61).
-- `relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
+- `docs/relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
 - `pre_defesa_analise_exploratoria_v2_base_v3_legenda_v2.ipynb`: v2 executada sobre a base v3 (`Base_academica_v3.csv`), com os indicadores de disciplinas corrigidos e a legenda v2.
-- `relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
+- `docs/relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
+- `relatorio_temporalidade_campos.md`: análise da disponibilidade temporal e prevenção de vazamento.
+- `docs/definicao_variavel_alvo.md`: definição proposta para a variável-alvo da issue #18 e status da quantificação.
+- `scripts/analysis/rotular_variavel_alvo.py`: cálculo agregado e reproduzível dos rótulos e exclusões para N = 4 e sensibilidade N = 2.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
-Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
+Eventos de desistência, abandono, cancelamento, desligamento e transferência-afastamento para outra instituição são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.
 
 ## Dependências e execução
 
@@ -24,7 +27,7 @@ python -m pip install pandas numpy matplotlib scipy ipython jupyterlab
 Execute a partir da pasta do repositório. Configure o CSV externo (exemplo genérico):
 
 ```powershell
-$env:TCC_CSV_PATH = "D:\dados_privados\Base_academica_v3.csv"
+$env:TCC_CSV_PATH = "D:\dados_privados\Base_academica_v4.csv"
 python -m jupyterlab
 ```
 
