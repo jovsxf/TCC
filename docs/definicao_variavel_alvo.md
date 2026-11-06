@@ -158,13 +158,3 @@ A definição deverá orientar:
 Definição provisória adotada pelo grupo, pendente de validação da orientação acadêmica.
 
 A regra poderá ser atualizada caso a orientação indique ajustes metodológicos.
-
-
-
-
-
-
-
-
-
-
