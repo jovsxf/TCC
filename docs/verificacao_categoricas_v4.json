@@ -1,0 +1,130 @@
+{
+  "executado_em_utc": "2026-11-06T22:15:33.144601+00:00",
+  "csv_nome": "Base_academica_v4.csv",
+  "csv_sha256": "a37d9f2f12cb0a19df1011be6ba61d64e644a4c01717714dcd0b62c782de3646",
+  "fonte_preservada": true,
+  "escopo": "verificação técnica; não é dataset final nem split experimental",
+  "linhas": 59059,
+  "alunos": 7615,
+  "linhas_academicas": 44417,
+  "ajuste_tecnico": {
+    "linhas": 46896,
+    "alunos": 6071
+  },
+  "verificacao_tecnica": {
+    "linhas": 12163,
+    "alunos": 1544
+  },
+  "alunos_em_ambos": 0,
+  "regra_divisao_tecnica": "SHA-256(issue19-check-v1|HANDLEALUNO) módulo 5 igual a 0 vai à verificação; demais ao ajuste",
+  "campos_verificados": [
+    "SIGLACURSO",
+    "TURNO",
+    "SEXO",
+    "IA70_02",
+    "IA70_04",
+    "IA70_06",
+    "IA09_02"
+  ],
+  "inventario": {
+    "SIGLACURSO": {
+      "categorias_observadas": 12,
+      "ausentes_total": 0,
+      "ausentes_academicas": 0
+    },
+    "TURNO": {
+      "categorias_observadas": 2,
+      "ausentes_total": 0,
+      "ausentes_academicas": 0
+    },
+    "SEXO": {
+      "categorias_observadas": 2,
+      "ausentes_total": 20,
+      "ausentes_academicas": 13
+    },
+    "IA70_02": {
+      "categorias_observadas": 9,
+      "ausentes_total": 43869,
+      "ausentes_academicas": 29227
+    },
+    "IA70_04": {
+      "categorias_observadas": 6,
+      "ausentes_total": 43869,
+      "ausentes_academicas": 29227
+    },
+    "IA70_06": {
+      "categorias_observadas": 9,
+      "ausentes_total": 43869,
+      "ausentes_academicas": 29227
+    },
+    "IA09_02": {
+      "categorias_observadas": 28,
+      "ausentes_total": 55812,
+      "ausentes_academicas": 41170
+    }
+  },
+  "colunas_transformadas": 80,
+  "categorias_por_campo_no_ajuste_sem_marcadores": {
+    "SIGLACURSO": 12,
+    "TURNO": 2,
+    "SEXO": 2,
+    "IA70_02": 9,
+    "IA70_04": 6,
+    "IA70_06": 9,
+    "IA09_02": 26
+  },
+  "cobertura_verificacao": {
+    "SIGLACURSO": {
+      "linhas": 12163,
+      "ausentes": 0,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 12163
+    },
+    "TURNO": {
+      "linhas": 12163,
+      "ausentes": 0,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 12163
+    },
+    "SEXO": {
+      "linhas": 12163,
+      "ausentes": 14,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 12149
+    },
+    "IA70_02": {
+      "linhas": 12163,
+      "ausentes": 8955,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 3208
+    },
+    "IA70_04": {
+      "linhas": 12163,
+      "ausentes": 8955,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 3208
+    },
+    "IA70_06": {
+      "linhas": 12163,
+      "ausentes": 8955,
+      "categorias_novas": 0,
+      "categorias_conhecidas": 3208
+    },
+    "IA09_02": {
+      "linhas": 12163,
+      "ausentes": 11477,
+      "categorias_novas": 2,
+      "categorias_conhecidas": 684
+    }
+  },
+  "vocabulario_preservado_ao_transformar": true,
+  "matrizes_e_vocabulario_exportados": false,
+  "modelos_treinados": 0,
+  "versoes": {
+    "python": "3.12.5",
+    "pandas": "2.2.3",
+    "numpy": "2.2.6",
+    "scipy": "1.15.2",
+    "scikit-learn": "1.6.1"
+  }
+}
