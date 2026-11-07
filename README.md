@@ -9,8 +9,8 @@
 - `relatorio_alteracoes_base_v2.md`: o que mudou na base e no notebook, por que, o que foi analisado, os números que mudaram em relação à pré-defesa e as decisões pendentes.
 - `pre_defesa_analise_exploratoria_v2_base_v3_legenda_v2.ipynb`: v2 executada sobre a base v3 (`Base_academica_v3.csv`), com os indicadores de disciplinas corrigidos e a legenda v2.
 - `relatorio_correcoes_indicadores_disciplinas.md`: correções nos indicadores de disciplinas (aprovadas, matriculadas, reprovadas, grade e progresso), como chegamos nelas, a legenda v2 e o resultado na base v3.
-- `modelos_utilizados.md`: justificativa, papel e espaço de hiperparâmetros dos quatro modelos (Regressão Logística, Árvore de Decisão, Random Forest e XGBoost) e relação com os trabalhos relacionados (#30).
-- `verifica_espacos_hiperparametros.py`: confere, com dados sintéticos, que os espaços de hiperparâmetros da #30 rodam nas versões atuais das bibliotecas.
+- `docs/modelos_utilizados.md`: justificativa, papel e espaço de hiperparâmetros dos quatro modelos (Regressão Logística, Árvore de Decisão, Random Forest e XGBoost) e relação com os trabalhos relacionados (#30).
+- `scripts/analysis/verifica_espacos_hiperparametros.py`: confere, com dados sintéticos, que os espaços de hiperparâmetros da #30 rodam nas versões atuais das bibliotecas.
 - `.gitignore`: exclui dados brutos, ambientes, checkpoints, documentos e versões intermediárias.
 
 Eventos de desistência, abandono, cancelamento e desligamento são **eventos de saída observados**; não equivalem necessariamente a evasão definitiva. O original é referência histórica e contém limitações examinadas na revisão.

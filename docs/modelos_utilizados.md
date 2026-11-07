@@ -271,7 +271,7 @@ O teste usou a validação agrupada por aluno prevista no projeto, calculou os p
 
 As configurações foram executadas sem erros e sem avisos de parâmetros obsoletos nas versões das bibliotecas registradas na seção seguinte. Na Regressão Logística, algumas tentativas geraram avisos de convergência, que deverão ser acompanhados na implementação definitiva.
 
-O código dessa verificação está no arquivo `verifica_espacos_hiperparametros.py`.
+O código dessa verificação está no arquivo `scripts/analysis/verifica_espacos_hiperparametros.py`.
 
 Essa etapa teve como objetivo verificar se os espaços definidos podem ser executados tecnicamente. Ela não representa uma avaliação de desempenho, pois usou dados sintéticos e não a base do INATEL.
 
